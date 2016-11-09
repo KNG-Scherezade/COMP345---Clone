@@ -56,13 +56,15 @@ void MapSaveBuilder::buildMap(string fileName)
 	}
 
 	int rows = mapElements.size();
-	int columns = mapElements[0].size();
+	int columns = 0;
+	if(mapElements.size() != 0)
+		columns = mapElements[0].size();
 
 	m_map = new Map(rows, columns);
 
 	if (!ifFile.eof())
 	{
-		cerr << "error occured while building map\n";
+		cerr << "Load failed. Error occured while building map\n";
 	}
 
 	for (int i = 0; i < rows; i++)
