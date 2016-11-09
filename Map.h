@@ -57,7 +57,7 @@ public:
 	//! @param	row		Row where the char will be inserted.
 	//!	@param	column	Column where the char will be inserted.
 	//! @param	obj		Character that will be inserted.
-	void fillCell(int row, int column, char obj);
+	void fillCell(int row, int column, string obj);
 
 	//! Returns a bool value indicating whether or not the specified cell is occcupied.
 	//!
@@ -93,6 +93,14 @@ public:
 	//!
 	//! @return	char in the row and column sent as parameters
 	char getCharObject(int row, int column);
+
+	//! Returns the string saved at a position in the map.
+	//!
+	//! @param	row		Row that needs to be checked.
+	//! @param	column	Column that needs to be checked.	
+	//!
+	//! @return	string in the row and column sent as parameters
+	string get(int row, int column);
 	
 private:
 	//! Number of rows in the map.
@@ -102,9 +110,12 @@ private:
 	int columns;
 
 	//! Char representation of the map.
-	char **map;
+	//char **map;
 
 	//! Used as filename when saving maps. If maps have the same name, the file will be overwritten.
+	vector<vector<std::string>> map;
+
+	//! name of map
 	string mapName;
 
 	//! Allocates memory for the map and sets the cell to empty values.

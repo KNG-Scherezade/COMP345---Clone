@@ -4,30 +4,31 @@
 #include <unordered_map>
 using namespace std;
 
+
+
 Map::Map()
 {
+	vector<vector<std::string>>  map = vector<vector<std::string>>();
 	rows = 2;
 	columns = 2;
+	mapName = "Default";
 	initializeMap();
 }
 
 Map::Map(Map * copyMap)
 {
+	vector<vector<std::string>>  map = vector<vector<std::string>>();
 	rows = copyMap->getRows();
 	columns = copyMap->getColumns();
 	mapName = copyMap->getMapName();
-	// Initialize rows
-	map = new char*[rows];
-
-	// Initialize pointers to columns
-	for (int i = 0; i < rows; ++i) {
-		map[i] = new char[columns];
-	}
 
 	// Make a copy of the map recieved as a param.
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < columns; j++) {
-			map[i][j] = copyMap->getCharObject(i,j);
+	for (int i = 0; i < rows; i++)
+	{
+		map.push_back(vector<string>());
+		for (int j = 0; j < columns; j++)
+		{
+			map[i].push_back(copyMap->get(i,j));
 		}
 	}
 
@@ -80,10 +81,10 @@ bool Map::validatePath()
 	}
 } 
 
-void Map::fillCell(int row, int column, char obj)
+void Map::fillCell(int row, int column, string obj)
 {
 	// If the object is a start or end cell, make sure that one does not already exist.
-	if (obj == 's' || obj == 'e') {
+	if (obj == "s" || obj == "e") {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
 				if (map[i][j] == obj) {
@@ -98,7 +99,7 @@ void Map::fillCell(int row, int column, char obj)
 
 bool Map::isOccupied(int row, int column)
 {
-	return (map[row][column] != ' ');
+	return (map[row][column] != " ");
 }
 
 void Map::printMap()
@@ -133,7 +134,7 @@ string Map::getMapName()
 {
 	return mapName;
 }
-
+/*
 char Map::getCharObject(int row, int column)
 {
 	if (row < rows && row >= 0) {
@@ -150,26 +151,28 @@ char Map::getCharObject(int row, int column)
 		return 0;
 	}
 }
+*/
+string Map::get(int row, int column)
+{
+	 return map[row][column];
+}
 
 void Map::initializeMap()
 {
-	// Initialize rows
-	map = new char*[rows];
-
-	// Initialize pointers to columns
-	for (int i = 0; i < rows; ++i) {
-		map[i] = new char[columns];
-	}
-
-	// Set default empty value for all the elemts in the map matrix
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < columns; j++) {
-			map[i][j] = ' ';
+	// initialize rows and columns
+	for (int i = 0; i < rows; i++)
+	{
+		map.push_back(vector<string>());
+		for (int j = 0; j < columns; j++)
+		{
+			map[i].push_back(" ");
 		}
 	}
 }
 
 void Map::deleteMap() {
+	// Not using any pointers, just self-deleting vector
+	/*
 	// Delete pointers to columns
 	for (int i = 0; i < rows; ++i) {
 		delete map[i];
@@ -177,6 +180,7 @@ void Map::deleteMap() {
 
 	// Delete rows
 	delete map;
+	*/
 }
 
 Node* Map::findStart()
@@ -185,7 +189,7 @@ Node* Map::findStart()
 	int nodeIdIndex = 0;
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns; j++) {
-			if (map[i][j] == 's') {
+			if (map[i][j] == "s") {
 				startPointer = new Node (nodeIdIndex, i, j);
 				startPointer->setTraversable(true);
 			}
@@ -201,7 +205,7 @@ Node* Map::findEnd()
 	int nodeIdIndex = 0;
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns; j++) {
-			if (map[i][j] == 'e') {
+			if (map[i][j] == "e") {
 				endPointer = new Node (nodeIdIndex, i, j, 0, true);
 			}
 			nodeIdIndex++;
@@ -260,7 +264,7 @@ bool Map::findValidPath(Node* startPointer, Node* endPointer)
 			// Check if the node was already found.
 			bool notFound = (parentMap.find(id) == parentMap.end() && closedMap.find(id) == closedMap.end());
 			if (notFound) {
-				bool traversable = (map[tempRow][currentColumn] == ' ');
+				bool traversable = (map[tempRow][currentColumn] == " ");
 				if (traversable) {
 					heuristic = calculateHeuristic(tempRow, currentColumn, endNodeRow, endNodeColumn);
 					parentMap[id] = Node(id, tempRow, currentColumn, heuristic, traversable);
@@ -276,7 +280,7 @@ bool Map::findValidPath(Node* startPointer, Node* endPointer)
 			// Check if the node was already found.
 			bool notFound = (parentMap.find(id) == parentMap.end() && closedMap.find(id) == closedMap.end());
 			if (notFound) {
-				bool traversable = (map[tempRow][currentColumn] == ' ');
+				bool traversable = (map[tempRow][currentColumn] == " ");
 				if (traversable) {
 					heuristic = calculateHeuristic(tempRow, currentColumn, endNodeRow, endNodeColumn);
 					parentMap[id] = Node(id, tempRow, currentColumn, heuristic, traversable);
@@ -292,7 +296,7 @@ bool Map::findValidPath(Node* startPointer, Node* endPointer)
 			// Check if the node was already found.
 			bool notFound = (parentMap.find(id) == parentMap.end() && closedMap.find(id) == closedMap.end());
 			if (notFound) {
-				bool traversable = (map[currentRow][tempColumn] == ' ');
+				bool traversable = (map[currentRow][tempColumn] == " ");
 				if (traversable) {
 					heuristic = calculateHeuristic(currentRow, tempColumn, endNodeRow, endNodeColumn);
 					parentMap[id] = Node(id, currentRow, tempColumn, heuristic, traversable);
@@ -308,7 +312,7 @@ bool Map::findValidPath(Node* startPointer, Node* endPointer)
 			// Check if the node was already found.
 			bool notFound = (parentMap.find(id) == parentMap.end() && closedMap.find(id) == closedMap.end());
 			if (notFound) {
-				bool traversable = (map[currentRow][tempColumn] == ' ');
+				bool traversable = (map[currentRow][tempColumn] == " ");
 				if (traversable) {
 					heuristic = calculateHeuristic(currentRow, tempColumn, endNodeRow, endNodeColumn);
 					parentMap[id] = Node(id, currentRow, tempColumn, heuristic, traversable);

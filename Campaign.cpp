@@ -49,9 +49,10 @@ vector<Map*>* Campaign::getMaps()
 
 void Campaign::addMap(Map * map)
 {
+
 	mapsInCampaign++;
 	currentMapIndex++;
-	maps->push_back(new Map (map));
+	maps->push_back(new Map (*map));
 	cout << "Map " << map->getMapName() << " has been added to campaign " << campaignName << endl;
 }
 
@@ -59,7 +60,6 @@ void Campaign::removeMap(Map * map)
 {
 	mapsInCampaign--;
 	currentMapIndex--;
-
 	// Remove the map from the campaign
 
 	auto it = std::find(maps->begin(), maps->end(), map);

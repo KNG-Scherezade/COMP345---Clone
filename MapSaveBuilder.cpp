@@ -69,8 +69,7 @@ void MapSaveBuilder::buildMap(string fileName)
 	{
 		for (int j = 0; j < columns; j++)
 		{
-			char* object = strdup((mapElements[i][j]).c_str());
-			m_map->fillCell(i, j, *object);
+			m_map->fillCell(i, j, mapElements[i][j]);
 		}
 	}
 }
@@ -86,7 +85,7 @@ void MapSaveBuilder::buildMonsters()
 	{
 		for (int j = 0; j < columns; j++)
 		{
-			if (m_map->getCharObject(i, j) == 'm')
+			if (m_map->get(i, j) == "m")
 				m_monsters->push_back(leveledMonster);
 		}
 	}
@@ -111,7 +110,7 @@ void MapSaveBuilder::buildTreasure()
 		randomNum.seed(random_device()());
 		for (int j = 0; j < columns; j++)
 		{
-			if (m_map->getCharObject(i, j) == 't')
+			if (m_map->get(i, j) == "t")
 			{
 				// Initialize another vector of items inside m_treasure because it will be filled with items
 				m_treasure->push_back(vector<Item>());
