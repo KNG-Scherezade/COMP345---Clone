@@ -754,7 +754,7 @@ void loadMaps(vector<Map*>* maps)
 		MapSaveBuilder* mapSaveBuilder = new MapSaveBuilder();
 		mapDirector.setMapBuilder(mapSaveBuilder);
 		mapDirector.constructMap(path);
-		maps->push_back(mapSaveBuilder->getMap());
+		maps->push_back(new Map(*(mapSaveBuilder->getMap())));
 
 		// Print the map
 		cout << "\nMap created from " << name;
