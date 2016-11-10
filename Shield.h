@@ -19,5 +19,6 @@ public:
 	void setArmorClass(int armorClass) { ac = armorClass; };
 	bool validateEquipment();
 	void levelUpEquipment(int h_level);
+	void printItem();
 };
 

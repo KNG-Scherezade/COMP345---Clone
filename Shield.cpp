@@ -12,7 +12,8 @@ Shield::Shield()
 {
 	ac = 1; 
 	level = 1;
-	setName("shield");
+	name = "unknown";
+	type = "shield";
 }
 
 //! shield constructor sets stats.
@@ -22,7 +23,8 @@ Shield::Shield(int s_ac, int s_level)
 {
 	ac = s_ac;
 	level = s_level;
-	name = "shield";
+	name = "unknown";
+	type = "shield";
 }
 
 //! Shield constructor sets stats based on level.
@@ -31,7 +33,8 @@ Shield::Shield(int s_level)
 {
 	ac = s_level;
 	level = s_level;
-	setName("shield");
+	name = "unknown";
+	type = "shield";
 }
 
 
@@ -45,6 +48,8 @@ bool Shield::validateEquipment()
 {
 	if (ac < 1 || ac > 5)
 		return false;
+	else if (dex != 0 || str != 0 || wis != 0 || dmg != 0 || atk != 0 || constitution != 0 || charisma != 0)
+		return false;
 	else
 		return true;
 }
@@ -52,5 +57,9 @@ bool Shield::validateEquipment()
 //! Sets the shield stats to the given level
 void Shield::levelUpEquipment(int h_level)
 {
-	ac = h_level;
+	if (h_level > 5)
+		ac = 5;
+	else
+		ac = h_level;
 }
+

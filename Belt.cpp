@@ -11,7 +11,8 @@ Belt::Belt()
 	str = 1;
 	constitution = 1;
 	level = 1;
-	setName("belt");
+	name = "unknown";
+	type = "belt";
 }
 
 //! Beltconstructor sets stats.
@@ -23,7 +24,8 @@ Belt::Belt(int b_str, int b_con, int b_level)
 	str = b_str;
 	constitution = b_con;
 	level = b_level;
-	setName("belt");
+	name = "unknown";
+	type = "belt";
 }
 
 
@@ -34,7 +36,8 @@ Belt::Belt(int b_level)
 	level = b_level;
 	str = b_level;
 	constitution = b_level;
-	name = "belt";
+	name = "unknown";
+	type = "belt";
 }
 
 
@@ -50,6 +53,8 @@ bool Belt::validateEquipment()
 	if (str < 1 || str > 5 ||
 		constitution < 1 || constitution> 5)
 		return false;
+	else if (ac != 0 || wis != 0 || dex != 0 || dmg != 0 || atk != 0 || charisma != 0)
+		return false;
 	else
 		return true;
 }
@@ -57,6 +62,13 @@ bool Belt::validateEquipment()
 //! Sets the belt stats to the given level
 void Belt::levelUpEquipment(int b_level)
 {
-	str = b_level;
-	constitution = b_level;
+	if (b_level > 5)
+	{
+		str = 5;
+		constitution = 5;
+	}
+	else {
+		str = b_level;
+		constitution = b_level;
+	}
 }

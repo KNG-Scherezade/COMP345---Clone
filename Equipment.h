@@ -10,11 +10,9 @@ class Equipment :
 	public Item
 {
 public:
-	Equipment();
-	~Equipment();
 	virtual bool validateEquipment() { return false; };
 	virtual void levelUpEquipment(int e_level) {};
 	void setLevel(int e_level) { level = e_level; };
-	int getLevel() { return level; }
+	int getLevel() { return level; };
 };
 

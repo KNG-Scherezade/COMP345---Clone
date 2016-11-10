@@ -5,8 +5,9 @@
 //!  It makes accessible all stats that armor has in D20 ruleset
 #pragma once
 #include "Item.h"
+#include "Equipment.h"
 //! This class represents armor that is equipped or carried by a character
-class Armor : public Item
+class Armor : public Equipment
 {
 public:
 	Armor();

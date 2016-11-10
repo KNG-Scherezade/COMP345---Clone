@@ -24,13 +24,14 @@
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 //#include <iostream>
-#include <sstream>
+//#include <sstream>
 #include <string>
 #include "Map.h"
 #include "Campaign.h"
 #include "MapDirector.h"
 #include "MapBuilder.h"
 #include "MapSaveBuilder.h"
+#include "ItemCreationDriver.h"
 using namespace std;
 //adding comment just so i could push
 //! Runs the driver to launch the map and campaign editor.
@@ -155,6 +156,7 @@ void showMainMenuForMapAndCampaign() {
 
 	vector<Map*>* maps = new vector<Map*>();
 	vector<Campaign*>* campaigns = new vector<Campaign*>();
+	ItemCreationDriver icd = ItemCreationDriver();
 	bool exitMenu;
 	string input;
 
@@ -187,6 +189,8 @@ void showMainMenuForMapAndCampaign() {
 		cout << "Enter 5 to save the created maps\n";
 		cout << "Enter 6 to save the created campaigns\n";
 		cout << "Enter 7 to load existing maps from files\n";
+		cout << "Enter 8 to create an item \n";
+		cout << "Enter 9 to load an item \n";
 		getline(cin, input);
 		stringstream myStream(input);
 		if (myStream >> option) {
@@ -228,6 +232,17 @@ void showMainMenuForMapAndCampaign() {
 			case 7:
 				loadMaps(maps);
 				break;
+
+			case 8:
+
+				icd.showItemMenu();
+				break;
+
+			case 9:
+
+				icd.showLoadMenu();
+				break;
+				
 
 			default:
 				cout << "Invalid option, please try again.\n" << endl;

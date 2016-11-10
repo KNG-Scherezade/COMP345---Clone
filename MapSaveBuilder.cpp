@@ -20,7 +20,6 @@
 #include "Shield.h"
 #include "Weapon.h"
 #include "Boots.h"
-
 MapSaveBuilder::MapSaveBuilder()
 {
 }
@@ -138,45 +137,45 @@ void MapSaveBuilder::printTreasure(vector<vector<Item>>* treasureList)
 		cout << "\nTreasure chest " << treasureCounter++;
 		for each (Item item in treasure)
 		{
-			cout << "\nItem name: " << item.getName();
+			cout << "\nItem type: " << item.getType();
 			cout << " level: " << static_cast<Equipment&>(item).getLevel();
-			if (item.getName() == "helmet")
+			if (item.getType() == "helmet")
 			{
 				Helmet helmet = static_cast<Helmet&>(item);
-				int dex = helmet.getDexterity();
-				cout << " dex: " << dex << " armor class: " << helmet.getArmorClass() << " wisdom: " << helmet.getWisdom();
+				int intel = helmet.getIntelligence();
+				cout << " intel: " << intel << " armor class: " << helmet.getArmorClass() << " wisdom: " << helmet.getWisdom();
 			}
-			else if (item.getName() == "boots")
+			else if (item.getType() == "boots")
 			{
 				Boots boots = static_cast<Boots&>(item);
 				int ac = boots.getArmorClass();
 				cout << " ac: " << ac << " dexterity: " << boots.getDexterity();
 			}
-			else if (item.getName() == "armor")
+			else if (item.getType() == "armor")
 			{
 				Armor armor = static_cast<Armor&>(item);
 				int ac = armor.getArmorClass();
 				cout << " ac: " << ac;
 			}
-			else if (item.getName() == "ring")
+			else if (item.getType() == "ring")
 			{
 				Ring ring = static_cast<Ring&>(item);
 				int cha = ring.getCharisma();
 				cout << " charisma: " << cha << " armor class: " << ring.getArmorClass() << " constitution: " << ring.getConstitution() << " strength: " << ring.getStrength() << " wisdom: " << ring.getWisdom();
 			}
-			else if (item.getName() == "shield")
+			else if (item.getType() == "shield")
 			{
 				Shield shield = static_cast<Shield&>(item);
 				int ac = shield.getArmorClass();
 				cout << " ac: " << ac;
 			}
-			else if (item.getName() == "weapon")
+			else if (item.getType() == "weapon")
 			{
 				Weapon weapon = static_cast<Weapon&>(item);
 				int dmg = weapon.getDamage();
 				cout << " damage: " << dmg << " attack: " << weapon.getAttack();
 			}
-			else if (item.getName() == "belt")
+			else if (item.getType() == "belt")
 			{
 				Belt belt = static_cast<Belt&>(item);
 				int str = belt.getStrength();

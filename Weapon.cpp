@@ -13,7 +13,8 @@ Weapon::Weapon()
 	atk = 1;
 	dmg = 1;
 	level = 1;
-	setName("weapon");
+	name = "unknown";
+	type = "weapon";
 }
 
 //! Weapon constructor sets stats.
@@ -25,14 +26,16 @@ Weapon::Weapon(int w_atk, int w_dmg, int w_level)
 	atk = w_atk;
 	dmg = w_dmg;
 	level = w_level;
-	setName("weapon");
+	name = "unknown";
+	type = "weapon";
 }
 
 //! Weapon constructor sets stats based on level.
 //! @param w_level the level which designates stat values
 Weapon::Weapon(int w_level)
 {
-	name = "weapon";
+	name = "unknown";
+	type = "weapon";
 	level = w_level;
 	levelUpEquipment(w_level);
 }
@@ -50,6 +53,8 @@ bool Weapon::validateEquipment()
 	if (atk < 1 || atk > 5 ||
 		dmg < 1 || dmg > 5)
 		return false;
+	else if (ac != 0 || dex != 0 || str != 0 || wis != 0 || constitution != 0 || charisma != 0)
+		return false;
 	else
 		return true;
 }
@@ -57,7 +62,11 @@ bool Weapon::validateEquipment()
 //! Sets the weapon stats to the given level
 void Weapon::levelUpEquipment(int w_level)
 {
+	if (w_level > 5)
+	{
+		atk = 5;
+		dmg = 5;
+	}
 	atk = w_level;
 	dmg = w_level;
-	level = w_level;
 }

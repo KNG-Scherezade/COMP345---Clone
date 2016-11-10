@@ -14,7 +14,8 @@ Ring::Ring()
 	charisma = 1;
 	constitution = 1;
 	level = 1;
-	setName("ring");
+	name = "unknown";
+	type = "ring";
 }
 
 
@@ -33,7 +34,8 @@ Ring::Ring(int r_ac, int r_wis, int r_str, int r_cha, int r_con, int r_level)
 	charisma = r_cha;
 	constitution = r_con;
 	level = r_level;
-	setName("ring");
+	name = "unknown";
+	type = "ring";
 }
 
 //! Ring constructor sets stats based on level.
@@ -42,7 +44,8 @@ Ring::Ring(int r_level)
 {
 	levelUpEquipment(r_level);
 	level = r_level;
-	name = "ring";
+	name = "unknown";
+	type = "ring";
 }
 
 Ring::~Ring()
@@ -63,6 +66,8 @@ bool Ring::validateEquipment()
 		constitution < 1 || constitution> 5 ||
 		charisma < 1 || charisma> 5)
 		return false;
+	else if (dex != 0 || dmg != 0 || atk != 0)
+		return false;
 	else
 		return true;
 }
@@ -71,10 +76,20 @@ bool Ring::validateEquipment()
 //! Sets the ring stats to the given level
 void Ring::levelUpEquipment(int r_level)
 {
-	ac = r_level;
-	wis = r_level;
-	str = r_level;
-	charisma = r_level;
-	constitution = r_level;
-	level = r_level;
+	if (r_level > 5)
+	{
+		ac = 5;
+		wis = 5;
+		str = 5;
+		charisma = 5;
+		constitution = 5;
+	}
+	else {
+		ac = r_level;
+		wis = r_level;
+		str = r_level;
+		charisma = r_level;
+		constitution = r_level;
+		level = r_level;
+	}
 }
