@@ -1,4 +1,7 @@
-
+//!@file ItemCreationDriver.cpp
+//!  @brief Implementation of driver for item creation used in the TUI
+//!
+//!  This class prompts the user to create, save, load and edit items
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -111,7 +114,7 @@ void ItemCreationDriver::showItemMenu()
 				showSaveDialogue(belt);
 			}
 			else {
-				cout << "Belt class invalid, please enter attribute values between 1 and 5" << "\n";
+				cout << "Belt invalid, please enter attribute values between 1 and 5" << "\n";
 			}
 			break;
 			// Boots
@@ -129,7 +132,7 @@ void ItemCreationDriver::showItemMenu()
 				showSaveDialogue(boots);
 			}
 			else {
-				cout << "Boots class invalid, please enter attribute values between 1 and 5" << "\n";
+				cout << "Boots invalid, please enter attribute values between 1 and 5" << "\n";
 			}
 			break;
 			// Ring
@@ -150,7 +153,7 @@ void ItemCreationDriver::showItemMenu()
 				showSaveDialogue(ring);
 			}
 			else {
-				cout << "Ring class invalid, please enter attribute values between 1 and 5" << "\n";
+				cout << "Ring invalid, please enter attribute values between 1 and 5" << "\n";
 			}
 			break;
 			// Shield
@@ -166,7 +169,7 @@ void ItemCreationDriver::showItemMenu()
 				showSaveDialogue(shield);
 			}
 			else {
-				cout << "Shield class invalid, please enter attribute values between 1 and 5" << "\n";
+				cout << "Shield invalid, please enter attribute values between 1 and 5" << "\n";
 			}
 			break;
 			// Weapon
@@ -183,7 +186,7 @@ void ItemCreationDriver::showItemMenu()
 				showSaveDialogue(weapon);
 			}
 			else {
-				cout << "Weapon class invalid, please enter attribute values between 1 and 5" << "\n";
+				cout << "Weapon invalid, please enter attribute values between 1 and 5" << "\n";
 			}
 			break;
 
@@ -198,6 +201,8 @@ void ItemCreationDriver::showItemMenu()
 }
 
 //! Loads the item in the given file
+//! @param fileName name of file containing item to be loaded
+//! @return returns the loaded item
 Item ItemCreationDriver::loadItem(string fileName)
 {
 	int ac;
@@ -403,6 +408,9 @@ Item ItemCreationDriver::loadItem(string fileName)
 	return errorItem;
 }
 
+//! Saves the given item in the given file
+//! @param item the item to be saved
+//! @param fileName name of file containing item to be loaded
 void ItemCreationDriver::saveItem(Item item, string fileName)
 {
 	ofstream outfile;
@@ -495,6 +503,7 @@ void ItemCreationDriver::saveItem(Item item, string fileName)
 	outfile.close();
 }
 
+//! Prompts the user to save an item
 void ItemCreationDriver::showSaveDialogue(Item item)
 {
 	string input;
@@ -516,10 +525,152 @@ void ItemCreationDriver::showSaveDialogue(Item item)
 		cout << "Invalid option";
 }
 
+//! Prompts the user to edit an item
+void ItemCreationDriver::showEditDialogue(Item item)
+{
+	string input;
+	string name;
+	stringstream myStream;
+	int wisdom;
+	int intel;
+	int ac;
+	int level;
+	int con;
+	int str;
+	int dex;
+	int cha;
+	int atk;
+	int dmg;
+	Armor armor;
+	Helmet helmet;
+	Belt belt;
+	Boots boots;
+	Ring ring;
+	Shield shield;
+	Weapon weapon;
+	cout << "\nwould you like to edit this item?\n)";
+	cout << "[1] yes\n";
+	cout << "[2] no\n";
+	getline(cin, input);
+	if (input == "1")
+	{
+		if (item.getType() == "armor")
+		{
+			level = enterNumber("level");
+			myStream >> level;
+			ac = enterNumber("armor class");
+			armor = Armor(ac, level);
+			if (armor.validateEquipment() == true)
+			{
+				saveItem(armor, item.getName());
+				cout << "\nEdit successful\n";
+			}
+			else {
+				cout << "Armor invalid, please enter attribute values between 1 and 5" << "\n";
+			}
+		}
+		else if (item.getType() == "helmet")
+		{			
+			level = enterNumber("level");
+			intel = enterNumber("intel");
+			ac = enterNumber("armor class");
+			wisdom = enterNumber("wisdom");
+			helmet = Helmet(ac, intel, wisdom, level);	
+			if (helmet.validateEquipment() == true)
+			{
+				saveItem(helmet, item.getName());
+				cout << "\nEdit successful\n";
+			}
+			else {
+				cout << "Helmet invalid, please enter attribute values between 1 and 5" << "\n";
+			}
+
+		}
+		else if (item.getType() == "belt")
+		{			
+			level = enterNumber("level");
+			str = enterNumber("strength");
+			con = enterNumber("constitution");
+			belt = Belt(str, con, level);
+			if (belt.validateEquipment() == true)
+			{
+				saveItem(belt, item.getName());
+				cout << "\nEdit successful\n";
+			}
+			else {
+				cout << "Belt invalid, please enter attribute values between 1 and 5" << "\n";
+			}
+		}
+		else if (item.getType() == "boots")
+		{			
+			level = enterNumber("level");
+			dex = enterNumber("dexterity");
+			ac = enterNumber("armor class");
+			boots = Boots(dex, ac, level);
+			if (boots.validateEquipment() == true)
+			{
+				saveItem(boots, item.getName());
+				cout << "\nEdit successful\n";
+			}
+			else {
+				cout << "Boots invalid, please enter attribute values between 1 and 5" << "\n";
+			}			
+		}
+		else if (item.getType() == "ring")
+		{			
+			level = enterNumber("level");
+			ac = enterNumber("armor class");
+			wisdom = enterNumber("wisdom");
+			str = enterNumber("strength");
+			cha = enterNumber("charisma");
+			con = enterNumber("constitution");
+			ring = Ring(ac, wisdom, str, cha, con, level);		
+			if (ring.validateEquipment() == true)
+			{
+				saveItem(ring, item.getName());
+				cout << "\nEdit successful\n";
+			}
+			else {
+				cout << "Ring invalid, please enter attribute values between 1 and 5" << "\n";
+			}
+		}
+		else if (item.getType() == "weapon")
+		{			
+			level = enterNumber("level");
+			atk = enterNumber("attack");
+			dmg = enterNumber("damage");
+			weapon = Weapon(atk, dmg, level);		
+			if (weapon.validateEquipment() == true)
+			{
+				saveItem(weapon, item.getName());
+				cout << "\nEdit successful\n";
+			}
+			else {
+				cout << "Weapon invalid, please enter attribute values between 1 and 5" << "\n";
+			}			
+		}
+		else if (item.getType() == "shield")
+		{		
+			level = enterNumber("level");
+			ac = enterNumber("armor class");
+			shield = Shield(ac, level);		
+			if (shield.validateEquipment() == true)
+			{
+				saveItem(shield, item.getName());
+				cout << "\nEdit successful\n";
+			}
+			else {
+				cout << "Shield invalid, please enter attribute values between 1 and 5" << "\n";
+			}			
+		}
+	}	
+}
+
+//! Prompts the user to load an item, after the item is loaded successfully the user is prompted to edit the item
 void ItemCreationDriver::showLoadMenu()
 {
 	string input;
-	cout << "\nEnter the filename of the item you would like to load (without file extension\n)";
+	cout << "\nEnter the filename of the item you would like to load (without file extension)\n";
 	getline(cin, input);
 	Item item = loadItem(input + ".txt");
 	// Returned item has name error if an error occured, an error message is also shown in the previous method
@@ -529,45 +680,53 @@ void ItemCreationDriver::showLoadMenu()
 		{
 			Shield shield = static_cast<Shield&>(item);
 			cout << "Shield name: " << shield.getName() << "  level: " << shield.getLevel() << " Armor Class: " << shield.getArmorClass() << "\n";
+			showEditDialogue(shield);
 		}
 		else if (item.getType() == "helmet")
 		{
 			Helmet helmet= static_cast<Helmet&>(item);
 			cout << "Helmet name: " << helmet.getName() << " level: " << helmet.getLevel() << " armor class: " << helmet.getArmorClass()
 				<< " intelligence: " << helmet.getIntelligence() << " wisdom: " << helmet.getWisdom() << "\n";
+			showEditDialogue(helmet);
 		}
 		else if (item.getType() == "armor")
 		{
 			Armor armor = static_cast<Armor&>(item);
 			cout << "Armor name: " << armor.getName() << " level: " << armor.getLevel() << " armor class: " << armor.getArmorClass() << "\n";
+			showEditDialogue(armor);
 		}
 		else if (item.getType() == "boots")
 		{
 			Boots boots= static_cast<Boots&>(item);
 			cout << "Boots name: " << boots.getName() << " level: " << boots.getLevel() << " Dexterity: " << boots.getDexterity()
 				<< " Armor Class: " << boots.getArmorClass() << "\n";
+			showEditDialogue(boots);
 		}
 		else if (item.getType() == "ring")
 		{
 			Ring ring= static_cast<Ring&>(item);
 			cout << "Ring name: " << ring.getName() << " level: " << ring.getLevel() << " Armor Class: " << ring.getArmorClass()
 				<< " Wisdom: " << ring.getWisdom() << " Strength: " << ring.getStrength() << " Charisma: " << ring.getCharisma() << " Constitution: " << ring.getConstitution() << "\n";
+			showEditDialogue(ring);
 		}
 		else if (item.getType() == "weapon")
 		{
 			Weapon weapon = static_cast<Weapon&>(item);
 			cout << "Weapon name: " << weapon.getName() << " level: " << weapon.getLevel() << " Attack: " << weapon.getAttack() << " damage: " << weapon.getDamage() << "\n";
+			showEditDialogue(weapon);
 		}
 		else if (item.getType() == "belt")
 		{
 			Belt belt= static_cast<Belt&>(item);
 			cout << "Belt name: " << belt.getName() << " level: " << belt.getLevel() << " strength: " << belt.getStrength()
 				<< " constitution: " << belt.getConstitution() << "\n";
+			showEditDialogue(belt);
 		}
-
 	}
 }
 
+
+//! Helper menu for prompting entry of fields with names
 string ItemCreationDriver::enterName()
 {
 	string name;
@@ -576,6 +735,7 @@ string ItemCreationDriver::enterName()
 	return name;
 }
 
+//! Helper menu for prompting entry of fields with numerical values
 int ItemCreationDriver::enterNumber(std::string attribute)
 {
 	int level;
