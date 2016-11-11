@@ -1,9 +1,9 @@
-#include "stdafx.h"
 #include "CharacterDriver.h"
 #include "Character.h"
 #include "Fighter.h"
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 
 CharacterDriver::CharacterDriver()
@@ -17,7 +17,7 @@ CharacterDriver::~CharacterDriver()
 
 //! Save a character to a file
 //! @param filename	String representing a file name
-void CharacterDriver::Save(Character* c, std::string filename)
+void CharacterDriver::save(Character* c, std::string filename)
 {
 	ofstream outfile;
 	outfile.open(filename + ".txt");
@@ -33,6 +33,13 @@ void CharacterDriver::Save(Character* c, std::string filename)
 	outfile << "cha: " << c->getCha() << endl;
 	outfile << "hp: " << c->getHp() << endl;
 	outfile << "max hp: " << c->getMaxHp() << endl;
+	outfile << "helmet: " << c->getHelmet() << endl;
+	outfile << "armor: " << c->getArmor() << endl;
+	outfile << "ring: " << c->getRing() << endl;
+	outfile << "belt: " << c->getBelt() << endl;
+	outfile << "boots: " << c->getBoots() << endl;
+	outfile << "shield: " << c->getShield() << endl;
+	outfile << "weapon: " << c->getWeapon() << endl;
 
 
 	outfile.close();
@@ -41,7 +48,7 @@ void CharacterDriver::Save(Character* c, std::string filename)
 //! Load a character from a file
 //! @param filename	String representing file name
 //! @return A character containing all loaded information
-Character* CharacterDriver::Load(std::string filename) {
+Character* CharacterDriver::load(std::string filename) {
 
 	Character* c = NULL;
 	std::string name;
@@ -145,7 +152,7 @@ void CharacterDriver::showSaveDialogue(Character* character)
 	{
 		if (decision == 1)
 		{
-			Save(character, character->getName());
+			save(character, character->getName());
 		}
 		else
 			return;
@@ -271,7 +278,7 @@ Character* CharacterDriver::showLoadMenu()
 	std::string input;
 	cout << "\nEnter the filename of the character (without file extension)\n";
 	getline(cin, input);
-	Character* c = Load(input + ".txt");
+	Character* c = load(input + ".txt");
 	// Returned item has name error if an error occured, an error message is also shown in the previous method
 	if (c == NULL)
 	{
@@ -281,13 +288,13 @@ Character* CharacterDriver::showLoadMenu()
 	else
 	{
 		cout << "\n*Character loaded successfully*\n" << endl;
-		PrintCharacterBasic(c);
+		printCharacterBasic(c);
 		return c;
 	}
 	
 }
 
-void CharacterDriver::PrintCharacterBasic(Character * c)
+void CharacterDriver::printCharacterBasic(Character * c)
 {
 	cout << c->getType() << endl;
 	cout << c->getName() << endl;
@@ -296,3 +303,45 @@ void CharacterDriver::PrintCharacterBasic(Character * c)
 	cout << "\n";
 
 }
+
+void CharacterDriver::selectItemToEquip(Character* c)
+{
+	std::string input;
+	int option;
+
+	cout << "Select the number of the item you would like to equip." << endl;
+	c->printInventory();
+	getline(cin, input);
+	stringstream myStream(input);
+	if (myStream >> option) {
+		if (option >= 0 && option < c->getInventory().size()) {
+			c->equip(option);
+		}
+		else
+			cout << "Invalid position." << endl;
+	}
+	else
+		cout << "Invalid input." << endl;
+}
+
+void CharacterDriver::selectItemToUnequip(Character* c)
+{
+	std::string input;
+	int option;
+
+	cout << "Select the number of the item you would like to unequip." << endl;
+	c->printEquipped();
+	getline(cin, input);
+	stringstream myStream(input);
+	if (myStream >> option) {
+		if (option >= 0 && option < 7) {
+			c->unequip(option);
+		}
+		else
+			cout << "Invalid position." << endl;
+	}
+	else
+		cout << "Invalid input." << endl;
+
+}
+

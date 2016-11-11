@@ -2,7 +2,6 @@
 //! @author Patrick Nicoll
 //! @brief Implementation of the character type fighter.
 
-#include "stdafx.h"
 #include "Fighter.h"
 
 //! Default constructor

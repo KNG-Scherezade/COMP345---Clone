@@ -157,12 +157,23 @@ int main(int argc, char* argv[])
 
 //! Shows a TUI (Text User Interface) to the user to allow them to select different options.
 void showMainMenuForMapAndCampaign() {
-
+	
+	//Character variables
 	Character* character = NULL;
+
+	//Item variables
+	Item item;
+	Ring ring;
+	Ring* r;
+
+	//Map & Campaign variables
 	vector<Map*>* maps = new vector<Map*>();
 	vector<Campaign*>* campaigns = new vector<Campaign*>();
+
+	//Drivers
 	ItemCreationDriver icd = ItemCreationDriver();
 	CharacterDriver cd = CharacterDriver();
+
 	bool exitMenu;
 	string input;
 
@@ -202,6 +213,9 @@ void showMainMenuForMapAndCampaign() {
 		cout << "Enter 12 to load an existing character.\n";
 		cout << "Enter 13 to view character's inventory.\n";
 		cout << "Enter 14 to view character's equipment.\n";
+		cout << "Enter 15 to add items to inventory.\n";
+		cout << "Enter 16 to equip an item.\n";
+		cout << "Enter 17 to unequip an item.\n";
 		getline(cin, input);
 		stringstream myStream(input);
 		if (myStream >> option) {
@@ -270,7 +284,10 @@ void showMainMenuForMapAndCampaign() {
 
 			case 11:
 				cout << "\n\n";
-				cd.Save(character, character->getName());
+				if (character != NULL)
+					cd.save(character, character->getName());
+				else
+					cout << "There is no character to save." << endl;
 				break;
 
 			case 12:
@@ -292,6 +309,34 @@ void showMainMenuForMapAndCampaign() {
 					character->printEquipped();
 				else
 					cout << "No character selected" << endl;
+				break;
+
+			case 15:
+				cout << "\n\n";
+				if (character != NULL) {
+					item = icd.loadItem("MagicRing.txt");
+					ring = static_cast<Ring&>(item);
+					r = &ring;
+					character->addToInventory(r);
+				}
+				else
+					cout << "No character is selected" << endl;
+				break;
+
+			case 16:
+				cout << "\n\n";
+				if (character != NULL)
+					cd.selectItemToEquip(character);
+				else
+					cout << "No character selected." << endl;
+				break;
+
+			case 17:
+				cout << "\n\n";
+				if (character != NULL)
+					cd.selectItemToUnequip(character);
+				else
+					cout << "No character selected." << endl;
 				break;
 
 			default:

@@ -260,8 +260,9 @@ Item ItemCreationDriver::loadItem(string fileName)
 	else if (type == "armor")
 	{
 		// name
-		getline(infile, name);
+		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
 		// level
 		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
@@ -277,8 +278,9 @@ Item ItemCreationDriver::loadItem(string fileName)
 	else if (type == "belt")
 	{
 		// name
-		getline(infile, name);
+		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
 		// level
 		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
@@ -298,8 +300,9 @@ Item ItemCreationDriver::loadItem(string fileName)
 	else if (type == "boots")
 	{
 		// name
-		getline(infile, name);
+		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
 		// level
 		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
@@ -319,8 +322,9 @@ Item ItemCreationDriver::loadItem(string fileName)
 	else if (type == "ring")
 	{
 		// name
-		getline(infile, name);
+		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
 		// level
 		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
@@ -371,8 +375,9 @@ Item ItemCreationDriver::loadItem(string fileName)
 	else if (type == "weapon")
 	{
 		// name
-		getline(infile, name);
+		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
 		// level
 		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());

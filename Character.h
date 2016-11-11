@@ -28,9 +28,10 @@ public:
 	void hit(int damage);
 	void printInventory();
 	void printEquipped();
-	void equip(Item* item);
-	void unequip(Item* item);
+	void equip(int pos);
+	void unequip(int slot);
 	virtual std::string getType() { return ""; }
+	void addToInventory(Item* item);
 
 	//! Set the name of the character
 	//! @param aName	Name of character
@@ -183,6 +184,14 @@ public:
 	//! Get the damage bonus of the character
 	//! @return Damage bonus
 	int Character::getDamageBonus() { return damageBonus; }
+
+	//! Set the inventory of the character
+	//! @param inv	Vector of items in inventory
+	void setInventory(vector<Item*> inv) { inventory = inv; }
+
+	//! Get the inventory of tha character
+	//! @return Vector of inventory items
+	vector<Item*> getInventory() { return inventory; }
 
 	//! Set the helmet worn by the character
 	//! @param aHelmet	Helmet
