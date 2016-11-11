@@ -1,16 +1,19 @@
-//! @file Character.h
+//! @file Character.cpp
 //! @author Patrick Nicoll 27218729
 //! @brief Implementation of the class representing an instance of a character
 
+#include "stdafx.h"
 #include "Character.h"
 #include <random>
 #include <iostream>
+#include <vector>
 
 
 //! Default no param constructor
 Character::Character() {
 	level = 1;
 	create();
+	inventory = vector<Item*>();
 }
 
 //! Constructor that takes a level to initialize the stats accordingly
@@ -18,11 +21,12 @@ Character::Character() {
 Character::Character(int levelVal) {
 	level = 1;
 	create();
+	inventory = vector<Item*>();
 
 	//Print statements used for testing
-	std::cout << "str: " << str << std::endl;
+	/*std::cout << "str: " << str << std::endl;
 	std::cout << "dex: " << dex << std::endl;
-	std::cout << "con: " << con << std::endl;
+	std::cout << "con: " << con << std::endl;*/
 
 	for (int i = 1; i < levelVal; i++) {
 		levelUp();
@@ -186,3 +190,165 @@ int Character::getModifier(int stat)
 void Character::hit(int damage) {
 	hp -= damage;
 }
+
+//! Prints the character's inventory
+void Character::printInventory()
+{
+	int ctr = 0;
+	cout << "*** " << name << "'s Inventory ***" << endl;
+	if (inventory.size() != 0) {
+		for each (Item* i in inventory)
+		{
+			cout << ctr << "- " << i->getName() << endl;
+			ctr++;
+		}
+	}
+	else
+		cout << "Empty" << endl;
+}
+
+//! Prints the character's equipped items
+void Character::printEquipped()
+{
+	if (helmet != NULL)
+		cout << "Helmet: " << helmet->getName() << endl;
+	else
+		cout << "Helmet: None" << endl;
+	if (armor != NULL)
+		cout << "Armor: " << armor->getName() << endl;
+	else
+		cout << "Armor: None" << endl;
+	if (ring != NULL)
+		cout << "Ring: " << ring->getName() << endl;
+	else
+		cout << "Ring: None" << endl;
+	if (belt != NULL)
+		cout << "Belt: " << belt->getName() << endl;
+	else
+		cout << "Belt: None" << endl;
+	if (boots != NULL)
+		cout << "Boots: " << boots->getName() << endl;
+	else
+		cout << "Boots: None" << endl;
+	if (shield != NULL)
+		cout << "Shield: " << shield->getName() << endl;
+	else
+		cout << "Shield: None" << endl;
+	if (weapon != NULL)
+		cout << "Weapon: " << weapon->getName() << endl;
+	else
+		cout << "Weapon: None" << endl;
+}
+
+void Character::equip(Item * item)
+{
+	std::string type = item->getType();
+
+	if (type == "Helmet") {
+		if (helmet == NULL)
+			helmet = static_cast<Helmet*>(item);
+		else {
+			inventory.push_back(helmet);
+			helmet = static_cast<Helmet*>(item);
+		}
+	}
+	if (type == "Armor") {
+		if (armor == NULL)
+			armor = static_cast<Armor*>(item);
+		else {
+			inventory.push_back(armor);
+			armor = static_cast<Armor*>(item);
+		}
+	}
+	if (type == "Ring") {
+		if (ring == NULL)
+			ring = static_cast<Ring*>(item);
+		else {
+			inventory.push_back(ring);
+			ring = static_cast<Ring*>(item);
+		}
+	}
+	if (type == "Belt") {
+		if (belt == NULL)
+			belt = static_cast<Belt*>(item);
+		else {
+			inventory.push_back(belt);
+			belt = static_cast<Belt*>(item);
+		}
+	}
+	if (type == "Boots") {
+		if (boots == NULL)
+			boots = static_cast<Boots*>(item);
+		else {
+			inventory.push_back(boots);
+			boots = static_cast<Boots*>(item);
+		}
+	}
+	if (type == "Shield") {
+		if (shield == NULL)
+			shield = static_cast<Shield*>(item);
+		else {
+			inventory.push_back(shield);
+			shield = static_cast<Shield*>(item);
+		}
+	}
+	if (type == "Weapon") {
+		if (weapon == NULL)
+			weapon = static_cast<Weapon*>(item);
+		else {
+			inventory.push_back(weapon);
+			weapon = static_cast<Weapon*>(item);
+		}
+	}
+
+}
+
+void Character::unequip(Item* item)
+{
+	std::string type = item->getType();
+
+	if (type == "Helmet") {
+		if (helmet != NULL) {
+			inventory.push_back(helmet);
+			helmet = NULL;
+		}
+	}
+	if (type == "Armor") {
+		if (armor != NULL) {
+			inventory.push_back(armor);
+			armor = NULL;
+		}
+	}
+	if (type == "Ring") {
+		if (ring != NULL) {
+			inventory.push_back(ring);
+			ring = NULL;
+		}
+	}
+	if (type == "Belt") {
+		if (belt != NULL) {
+			inventory.push_back(belt);
+			belt = NULL;
+		}
+	}
+	if (type == "Boots") {
+		if (boots != NULL) {
+			inventory.push_back(boots);
+			boots = NULL;
+		}
+	}
+	if (type == "Shield") {
+		if (shield != NULL) {
+			inventory.push_back(shield);
+			shield = NULL;
+		}
+	}
+	if (type == "Weapon") {
+		if (weapon != NULL) {
+			inventory.push_back(weapon);
+			weapon = NULL;
+		}
+	}
+}
+
+

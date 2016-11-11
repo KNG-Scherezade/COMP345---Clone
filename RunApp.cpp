@@ -32,6 +32,9 @@
 #include "MapBuilder.h"
 #include "MapSaveBuilder.h"
 #include "ItemCreationDriver.h"
+#include "CharacterDriver.h"
+#include "Character.h"
+#include "Fighter.h"
 using namespace std;
 //adding comment just so i could push
 //! Runs the driver to launch the map and campaign editor.
@@ -121,6 +124,7 @@ string inputCharObject(int row, int column);
 //! @return	The name for a map or campaign.
 string inputName();
 
+
 //! main() function. Entry point of the program
 //! It does the following: 
 //! 1. Create a test suite object from the registry as populated by the code in the Test Classes
@@ -154,9 +158,11 @@ int main(int argc, char* argv[])
 //! Shows a TUI (Text User Interface) to the user to allow them to select different options.
 void showMainMenuForMapAndCampaign() {
 
+	Character* character = NULL;
 	vector<Map*>* maps = new vector<Map*>();
 	vector<Campaign*>* campaigns = new vector<Campaign*>();
 	ItemCreationDriver icd = ItemCreationDriver();
+	CharacterDriver cd = CharacterDriver();
 	bool exitMenu;
 	string input;
 
@@ -186,11 +192,16 @@ void showMainMenuForMapAndCampaign() {
 		cout << "Enter 2 to edit a map.\n";
 		cout << "Enter 3 to create a campaign.\n";
 		cout << "Enter 4 to edit a campaign.\n";
-		cout << "Enter 5 to save the created maps\n";
-		cout << "Enter 6 to save the created campaigns\n";
-		cout << "Enter 7 to load existing maps from files\n";
-		cout << "Enter 8 to create an item \n";
-		cout << "Enter 9 to load an item \n";
+		cout << "Enter 5 to save the created maps.\n";
+		cout << "Enter 6 to save the created campaigns.\n";
+		cout << "Enter 7 to load existing maps from files.\n";
+		cout << "Enter 8 to create an item.\n";
+		cout << "Enter 9 to load an item.\n";
+		cout << "Enter 10 to create a character.\n";
+		cout << "Enter 11 to save the character.\n";
+		cout << "Enter 12 to load an existing character.\n";
+		cout << "Enter 13 to view character's inventory.\n";
+		cout << "Enter 14 to view character's equipment.\n";
 		getline(cin, input);
 		stringstream myStream(input);
 		if (myStream >> option) {
@@ -200,6 +211,7 @@ void showMainMenuForMapAndCampaign() {
 				break;
 
 			case 1:
+				cout << "\n\n";
 				rows = inputRowsForNewMap();
 				columns = inputColumnsForNewMap();
 				name = inputName();
@@ -209,47 +221,87 @@ void showMainMenuForMapAndCampaign() {
 				break;
 
 			case 2:
+				cout << "\n\n";
 				maps = selectMapToEdit(maps);
 				break;
 
 			case 3:
+				cout << "\n\n";
 				name = inputName();
 				campaigns->push_back(new Campaign(name));
 				break;
 
 			case 4:
+				cout << "\n\n";
 				selectCampaignToEdit(campaigns, maps);
 				break;
 
 			case 5:
+				cout << "\n\n";
 				saveMaps(maps);
 				break;
 
 			case 6:
+				cout << "\n\n";
 				saveCampaigns(campaigns);
 				break;
 
 			case 7:
+				cout << "\n\n";
 				loadMaps(maps);
 				break;
 
 			case 8:
-
+				cout << "\n\n";
 				icd.showItemMenu();
 				break;
 
 			case 9:
-
+				cout << "\n\n";
 				icd.showLoadMenu();
+				break;	
+			
+			case 10:
+				cout << "\n\n";
+				character = cd.createACharacter();
+				if (character != NULL)
+					cd.showSaveDialogue(character);
 				break;
-				
+
+			case 11:
+				cout << "\n\n";
+				cd.Save(character, character->getName());
+				break;
+
+			case 12:
+				cout << "\n\n";
+				character = cd.showLoadMenu();
+				break;
+
+			case 13:
+				cout << "\n\n";
+				if (character != NULL)
+					character->printInventory();
+				else
+					cout << "No character selected" << endl;
+				break;
+
+			case 14:
+				cout << "\n\n";
+				if (character != NULL)
+					character->printEquipped();
+				else
+					cout << "No character selected" << endl;
+				break;
 
 			default:
+				cout << "\n\n";
 				cout << "Invalid option, please try again.\n" << endl;
 				break;
 			}
 		}
 		else {
+			cout << "\n\n";
 			cout << "Invalid option, please try again.\n" << endl;
 		}
 
@@ -909,7 +961,7 @@ string inputCharObject(int row, int column)
 	return input;
 }
 
-//! Accepts input to use as the name for a map or campaign
+//! Accepts input to use as the name of the object being worked on (map, campaign, character)
 string inputName()
 {
 	bool isInputValid = false;
@@ -918,11 +970,13 @@ string inputName()
 	int option = -1;
 
 	do {
-		cout << "Enter the name for the map or campaign:\n";
+		cout << "\n";
+		cout << "Enter the name:\n";
 		getline(cin, input);
 		name = input;
 
 		if (!name.empty()) {
+			cout << "\n";
 			cout << "You entered: " << input << "\n";
 			cout << "Enter 0 to cancel\n";
 			cout << "Enter 1 to confirm\n";
@@ -932,10 +986,12 @@ string inputName()
 			if (myStream >> option) {
 				switch (option) {
 				case 0:
+					cout << "\n\n";
 					isInputValid = false;
 					break;
 
 				case 1:
+					cout << "\n\n";
 					isInputValid = true;
 					break;
 
