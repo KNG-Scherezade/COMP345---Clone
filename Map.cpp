@@ -98,7 +98,7 @@ void Map::fillCell(int row, int column, string obj)
 		}
 	}
 	//If it's a chest, push it into the vector
-	else if (obj == "&") {
+	else if (obj == "&" || obj == "t") {
 		ItemContainer* aChest = new ItemContainer(this, column, row);
 		srand(time(NULL));
 		chests.push_back(aChest);
@@ -373,8 +373,9 @@ int Map::checkStandingSpace(int col, int row) {
 	else if (map[row][col] == "s") spaceState = -1;
 	else if (map[row][col] == " ") spaceState = 0;
 	else if (map[row][col] == "e") spaceState = 1;
-	else if (map[row][col] == "&") spaceState = 2;
+	else if (map[row][col] == "&"|| map[row][col] == "t") spaceState = 2;
 	else if (map[row][col] == "^") spaceState = 3;
+	else if (map[row][col] == "O") spaceState = '?';
 	else spaceState = '?';
 
 	return spaceState;
