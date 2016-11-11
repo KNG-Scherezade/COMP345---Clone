@@ -1,0 +1,10 @@
+﻿  TextSprite.cpp
+  TestUnit.cpp
+  SDLSetup.cpp
+  Game.cpp
+  Fighter.cpp
+  COMP345DnD.cpp
+  CharacterTest.cpp
+  Character.cpp
+  Generating Code...
+cppunit.lib(TestFactoryRegistry.obj) : fatal error LNK1112: module machine type 'X86' conflicts with target machine type 'x64'

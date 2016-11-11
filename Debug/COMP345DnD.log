@@ -1,0 +1,6 @@
+﻿  RunApp.cpp
+  CharacterDriver.cpp
+c:\users\justp\onedrive\documents\github\comp345dnd\comp345dnd\characterdriver.cpp(412): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  COMP345DnD.vcxproj -> C:\Users\justp\OneDrive\Documents\GitHub\COMP345DnD\Debug\COMP345DnD.exe
+  COMP345DnD.vcxproj -> C:\Users\justp\OneDrive\Documents\GitHub\COMP345DnD\Debug\COMP345DnD.pdb (Full PDB)

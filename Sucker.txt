@@ -1,0 +1,18 @@
+type: Fighter
+name: Sucker
+level: 1
+str: 16
+dex: 14
+con: 3
+int: 17
+wis: 17
+cha: 12
+hp: 5
+max hp: 5
+helmet: -
+armor: -
+ring: MagicRing
+belt: -
+boots: -
+shield: -
+weapon: -
