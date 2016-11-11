@@ -1,18 +1,37 @@
-//! @file Character.cpp
+//! @file Character.h
 //! @author Patrick Nicoll 27218729
 //! @brief Implementation of the class representing an instance of a character
 
+
+#define CHARA_POSITION_X mapPtr->getCharacterPosition()[1]//cols are x
+#define CHARA_POSITION_Y mapPtr->getCharacterPosition()[0]//rows are y
+
+#define SET_POSITION mapPtr->setCharacterPosition(rtn)
+#define SET_CURRENT_SQUARE mapPtr->setCurrentSquare(StandingOn(rtn[1], rtn[0]))
+
+#define CHECK_SPACE_L StandingOn(CHARA_POSITION_X - 1, CHARA_POSITION_Y)
+#define CHECK_SPACE_R StandingOn(CHARA_POSITION_X + 1, CHARA_POSITION_Y)
+#define CHECK_SPACE_U StandingOn(CHARA_POSITION_X, CHARA_POSITION_Y - 1)
+#define CHECK_SPACE_UL StandingOn(CHARA_POSITION_X - 1, CHARA_POSITION_Y - 1)
+#define CHECK_SPACE_UR StandingOn(CHARA_POSITION_X + 1, CHARA_POSITION_Y - 1)
+#define CHECK_SPACE_D StandingOn(CHARA_POSITION_X , CHARA_POSITION_Y + 1)
+#define CHECK_SPACE_DL StandingOn(CHARA_POSITION_X - 1, CHARA_POSITION_Y + 1)
+#define CHECK_SPACE_DR StandingOn(CHARA_POSITION_X + 1, CHARA_POSITION_Y + 1)
+
+//#include "stdafx.h"
 #include "Character.h"
+#include "ItemGenerator.h"
+
 #include <random>
 #include <iostream>
 #include <vector>
 
 
+
+
 //! Default no param constructor
 Character::Character() {
-	level = 1;
-	create();
-	inventory = vector<Item*>();
+
 }
 
 //! Constructor that takes a level to initialize the stats accordingly
@@ -33,11 +52,70 @@ Character::Character(int levelVal) {
 
 }
 
+Character::Character(Map* map) {
+
+	level = 1;
+	create();
+
+	mapPtr = map;
+	moveable = (true);
+	mapPtr->setCharacter(this);
+
+}
+//! To be used if constructor does not set the map pointer
+void Character::postInitialize(Map* map) {
+	mapPtr = map;
+	moveable = (true);
+	mapPtr->setCharacter(this);
+
+	for each(ItemContainer* ic in mapPtr->getChests()) {
+		ItemGenerator ig;
+		ic->addItem(ig.generateItemPtr(level));
+	}
+	for each(Monster* mons in mapPtr->getMonsters()) {
+		mons->levelUpStats(level);
+	}
+}
+
+//! Constructor that takes a level to initialize the stats accordingly
+//!Takes map pointer
+//! @param levelVal	Level of character
+Character::Character(int levelVal, Map* map) {
+	create();
+
+	//Print statements used for testing
+	std::cout << "str: " << str << std::endl;
+	std::cout << "dex: " << dex << std::endl;
+	std::cout << "con: " << con << std::endl;
+
+	for (int i = 1; i < levelVal; i++) {
+		levelUp();
+	}
+
+	mapPtr = map;
+	moveable = (true);
+	mapPtr->setCharacter(this);
+
+}
+
 //! Destructor
 Character::~Character()
 {
 }
 
+//!Sets the characters position on the map.
+void Character::configurePosition() {
+	if (mapPtr->getMap().size() != 0) {
+		int rows = mapPtr->getRows();
+		int cols = mapPtr->getColumns();
+		for (int i = 0; i < rows; i++)
+			for (int j = 0; j < cols; j++)
+				if (mapPtr->getMap()[i][j] == "s") {
+					int rtn[] = { i , j };
+					SET_POSITION;
+				}
+	}
+}
 //! Validates wheter the character has valid starting stats
 //! @return Whether valid or not, true it is valid, false it is not
 bool Character::validateNewCharacter()
@@ -190,6 +268,7 @@ void Character::hit(int damage) {
 	hp -= damage;
 }
 
+
 //! Prints the character's inventory
 void Character::printInventory()
 {
@@ -218,7 +297,7 @@ void Character::printEquipped()
 		cout << "[1] Armor: " << armor->getName() << endl;
 	else
 		cout << "[1] Armor: None" << endl;
-	if (ring != NULL) 
+	if (ring != NULL)
 		cout << "[2] Ring: " << ring->getName() << endl;
 	else
 		cout << "[2] Ring: None" << endl;
@@ -238,7 +317,7 @@ void Character::printEquipped()
 		cout << "[6] Weapon: " << weapon->getName() << endl;
 	else
 		cout << "[6] Weapon: None" << endl;
-	
+
 	cout << "\n";
 }
 
@@ -405,4 +484,177 @@ void Character::addToInventory(Item* item) {
 	inventory.push_back(item);
 }
 
+
+
+
+//////////////////////MOVEMENT
+
+
+
+
+//!Checks if the character can make a valid move on the map
+void Character::checkMove(char moveDir) {
+	moveable = (true); //negative conditions set false
+	int rtn[2];
+	rtn[1] = CHARA_POSITION_X;
+	rtn[0] = CHARA_POSITION_Y;
+	if (moveDir == 'l' || moveDir == 'L') {
+		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X - 1, CHARA_POSITION_Y)) {
+			moveable = (false);
+		}
+		else {
+			rtn[1] = CHARA_POSITION_X - 1;
+			rtn[0] = CHARA_POSITION_Y;
+		}
+	}
+	else if (moveDir == 'r' || moveDir == 'R') {
+		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X + 1, CHARA_POSITION_Y)) {
+			moveable = (false);
+		}
+		else {
+			rtn[1] = CHARA_POSITION_X + 1;
+			rtn[0] = CHARA_POSITION_Y;
+		}
+	}
+	else if (moveDir == 'u' || moveDir == 'U') {
+		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X, CHARA_POSITION_Y - 1)) {
+			moveable = (false);
+		}
+		else {
+			rtn[1] = CHARA_POSITION_X;
+			rtn[0] = CHARA_POSITION_Y - 1;
+		}
+	}
+	else if (moveDir == 'd' || moveDir == 'D') {
+		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X, CHARA_POSITION_Y + 1)) {
+			moveable = (false);
+		}
+		else {
+			rtn[1] = CHARA_POSITION_X;
+			rtn[0] = CHARA_POSITION_Y + 1;
+		}
+	}
+	else {
+		moveable = (false);
+	}
+	//std::cout << rtn[1] << " " << rtn[0] << "\n";
+	SET_POSITION;
+	//Set your location on the map
+	SET_CURRENT_SQUARE;
+	mapPtr->notify();
+}
+
+
+//!Checks what the character is looking at and returns an ID from map function checkStandingSpace(col, row)
+int Character::checkLook(char lookDir) {
+	int spaceID = '?';
+	std::string finalLookDir;
+	if (lookDir == 'l' || lookDir == 'L') {
+		finalLookDir = "l";
+		spaceID = CHECK_SPACE_L;
+	}
+	else if (lookDir == 'r' || lookDir == 'R') {
+		finalLookDir = "r";
+		spaceID = CHECK_SPACE_R;
+	}
+	else if (lookDir == 'u' || lookDir == 'U') {
+		std::cout << "Enter l for diagonal left, r for diagonal right and u for straight up\n";
+		std::cin >> lookDir;
+		if (lookDir == 'l' || lookDir == 'L') {
+			finalLookDir = "ul";
+			spaceID = CHECK_SPACE_UL;
+		}
+		else if (lookDir == 'r' || lookDir == 'R') {
+			finalLookDir = "ur";
+			spaceID = CHECK_SPACE_UR;
+		}
+		else if (lookDir == 'u' || lookDir == 'U') {
+			finalLookDir = "u";
+			spaceID = CHECK_SPACE_U;
+		}
+		else
+			spaceID = '?';
+	}
+	else if (lookDir == 'd' || lookDir == 'D') {
+		std::cout << "Enter l for diagonal left, r for diagonal right and d for straight down\n";
+		std::cin >> lookDir;
+		if (lookDir == 'l' || lookDir == 'L') {
+			finalLookDir = "dl";
+			spaceID = CHECK_SPACE_DL;
+		}
+		else if (lookDir == 'r' || lookDir == 'R') {
+			finalLookDir = "dr";
+			spaceID = CHECK_SPACE_DR;
+		}
+		else if (lookDir == 'd' || lookDir == 'D') {
+			finalLookDir = "d";
+			spaceID = CHECK_SPACE_D;
+		}
+		else {
+			spaceID = '?';
+		}
+	}
+
+	if (finalLookDir == "l")	checkInteraction(CHARA_POSITION_Y, CHARA_POSITION_X - 1, spaceID);
+	else if (finalLookDir == "r")checkInteraction(CHARA_POSITION_Y, CHARA_POSITION_X + 1, spaceID);
+	else if (finalLookDir == "u")checkInteraction(CHARA_POSITION_Y - 1, CHARA_POSITION_X, spaceID);
+	else if (finalLookDir == "ul")checkInteraction(CHARA_POSITION_Y - 1, CHARA_POSITION_X - 1, spaceID);
+	else if (finalLookDir == "ur")checkInteraction(CHARA_POSITION_Y - 1, CHARA_POSITION_X + 1, spaceID);
+	else if (finalLookDir == "d")checkInteraction(CHARA_POSITION_Y + 1, CHARA_POSITION_X, spaceID);
+	else if (finalLookDir == "dr")checkInteraction(CHARA_POSITION_Y + 1, CHARA_POSITION_X + 1, spaceID);
+	else if (finalLookDir == "dl")checkInteraction(CHARA_POSITION_Y + 1, CHARA_POSITION_X - 1, spaceID);
+
+	return spaceID;
+}
+
+//!Based off of what happens in checklook, this function alters the state of the map, displays a message or does other actions.
+//!Eg. the character makes acts on a chest so it should get the map to make a change.(Only map related features)
+//! ex. the character interacts with a chest so the chest flag should be set.
+void Character::checkInteraction(int row, int col, int type) {
+	mapPtr->notify();
+	switch (type) {
+	case -3:
+		lastInteractedMonster = mapPtr->getMonstersAtPosition(col, row);
+		break;
+	case -2:
+		std::cout << "\nT'IS PILLAR\n";
+		break;
+	case -1:
+		std::cout << "\nT'IS AN ENTRANCE\n";
+		break;
+	case 0:
+		std::cout << "\nT'IS EMPTY\n";
+		break;
+	case 1:
+		std::cout << "\nT'IS AN EXIT\n";
+		break;
+	case 2:
+		lastOpenedChest = mapPtr->getChestAtPosition(col, row);
+		break;
+	case 3:
+		std::cout << "\nT'IS AN OPEN CHEST\n";
+		break;
+	default:
+		std::cout << "\nT'IS A WALL\n";
+	}
+}
+
+std::string Character::toString() {
+	return ("Name: " + name + "\nLevel: " + std::to_string(level) + "\nstr:" + std::to_string(str) + "\ndex:" + std::to_string(dex) + "\ncon" + std::to_string(con)
+		+ "\nInt" + std::to_string(intel) + "\nwis" + std::to_string(wis) + "\ncha:" + std::to_string(cha) + "\nHP: " + std::to_string(hp) + "\nmax HP: " + std::to_string(maxHp) + "\n");
+}
+
+
+//! A character specific usage of map's checkStandingSpace(int col,int row) function
+int Character::StandingOn(int col, int row) {
+	return mapPtr->checkStandingSpace(col, row);
+}
+
+bool Character::getMoveable() {
+	return moveable;
+}
+
+void Character::setMoveable(bool move) {
+	moveable = move;
+}
 

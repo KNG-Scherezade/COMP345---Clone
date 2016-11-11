@@ -21,4 +21,3 @@ public:
 	bool validateEquipment();
 	void levelUpEquipment(int b_level);
 };
-

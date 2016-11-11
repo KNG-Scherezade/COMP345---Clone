@@ -59,3 +59,40 @@ Item ItemGenerator::generateItem(int level)
 
 	return item;
 }
+
+Item* ItemGenerator::generateItemPtr(int level)
+{
+	mt19937 randomNum;
+	randomNum.seed(random_device()());
+	// Set random numbers between 0 and 6
+	uniform_int_distribution<uint32_t> uint_dist10(0, 6);
+	Item* item;
+	switch (uint_dist10(randomNum))
+	{
+	case 0:
+		item = new Helmet(level);
+		break;
+	case 1:
+		item = new Armor(level);
+		break;
+	case 2:
+		item = new Belt(level);
+		break;
+	case 3:
+		item = new Ring(level);
+		break;
+	case 4:
+		item = new Shield(level);
+		break;
+	case 5:
+		item = new Weapon(level);
+		break;
+	case 6:
+		item = new Boots(level);
+		break;
+	default:
+		item = new Helmet(level);
+	}
+
+	return item;
+}

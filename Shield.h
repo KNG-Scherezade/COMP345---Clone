@@ -21,4 +21,3 @@ public:
 	void levelUpEquipment(int h_level);
 	void printItem();
 };
-

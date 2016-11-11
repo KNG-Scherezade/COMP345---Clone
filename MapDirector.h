@@ -19,13 +19,13 @@ public:
 	{
 		return m_mapBuilder->getMap();
 	}
-	void constructMap(string fileName) 
-	{ 
+	void constructMap(string fileName)
+	{
 		m_mapBuilder->createNewMapProduct();
 		m_mapBuilder->buildMap(fileName);
 		m_mapBuilder->buildMonsters();
 		m_mapBuilder->buildTreasure();
 	};
-private: 
+private:
 	MapBuilder* m_mapBuilder;
 };

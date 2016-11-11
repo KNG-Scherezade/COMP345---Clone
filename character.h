@@ -1,11 +1,48 @@
 #pragma once
 
+#include "Helmet.h"
+#include "Armor.h"
+#include "Belt.h"
+#include "Ring.h"
+#include "Shield.h"
+#include "Weapon.h"
+#include "Boots.h"
+#include <vector>
+
+#include "Map.h"
+#include "ItemContainer.h"
+
+
+class Map;
+class ItemContainer;
+class Monster;
+
 class Character
 {
 public:
 	Character();
+
+	//used for character creation
 	Character(int levelVal);
+	void postInitialize(Map* map);
+
+	Character(Map* map);
+	Character(int levelVal, Map* map);
 	~Character();
+
+	void addToInventory(Item* item);
+	virtual std::string getType() { return ""; }
+
+	std::string toString();
+
+	void configurePosition();
+	void checkMove(char moveDir);
+	int checkLook(char lookDir);
+	int StandingOn(int col, int row);
+	void checkInteraction(int row, int col, int type);
+	bool getMoveable();
+
+	void setMoveable(bool movable);
 
 	void create();
 	static int getModifier(int stat);
@@ -17,6 +54,20 @@ public:
 	void levelUp();
 	bool validateNewCharacter();
 	void hit(int damage);
+	void printInventory();
+	void printEquipped();
+	void equip(int slot);
+	void unequip(int slot);
+
+	//virtual std::string getType() { return ""; }
+
+	//! Set the name of the character
+	//! @param aName	Name of character
+	void setName(std::string aName) { name = aName; }
+
+	//! Get the name of the character
+	//! @return	Name of the character
+	std::string getName() { return name; }
 
 	//! Set the level of the character
 	//! @param levelVal	Level of the character
@@ -162,24 +213,78 @@ public:
 	//! @return Damage bonus
 	int Character::getDamageBonus() { return damageBonus; }
 
-	/*
-	void setHelmet(Helmet helmet);
-	Helmet getHelmet();
-	void setArmor(Armor armor);
-	Armor getArmor();
-	void setShield(Shield shield);
-	Shield getShield();
-	void setRing(Ring ring);
-	Ring getRing();
-	void setBelt(Belt belt);
-	Belt getBelt();
-	void setBoots(Boots boots);
-	Boots getBoots();
-	void setWeapon(Weapon weapon);
-	Weapon getWeapon();
-	*/
+	//! Set the inventory of the character
+	//! @param inv	Vector of items in inventory
+	void setInventory(vector<Item*> inv) { inventory = inv; }
+
+	//! Get the inventory of tha character
+	//! @return Vector of inventory items
+	vector<Item*>* getInventory() { return &inventory; }
+
+	//! Set the helmet worn by the character
+	//! @param aHelmet	Helmet
+	void setHelmet(Helmet* aHelmet) { helmet = aHelmet; }
+
+	//! Get the helmet being worn by the character
+	//! @return Helmet  worn
+	Helmet* getHelmet() { return helmet; }
+
+	//! Set the armor worn by the character
+	//! @param newArmor	Armor
+	void setArmor(Armor* newArmor) { armor = newArmor; }
+
+	//! Get the armor being worn by the character
+	//! @return Armor  worn
+	Armor* getArmor() { return armor; }
+
+	//! Set the shield worn by the character
+	//! @param aShield	Shield
+	void setShield(Shield* aShield) { shield = aShield; }
+
+	//! Get the shield being worn by the character
+	//! @return Shield  worn
+	Shield* getShield() { return shield; }
+
+	//! Set the ring worn by the character
+	//! @param aRing	Ring
+	void setRing(Ring* aRing) { ring = aRing; }
+
+	//! Get the ring being worn by the character
+	//! @return Ring  worn
+	Ring* getRing() { return ring; }
+
+	//! Set the belt worn by the character
+	//! @param aBelt	Belt
+	void setBelt(Belt* aBelt) { belt = aBelt; }
+
+	//! Get the belt being worn by the character
+	//! @return Belt  worn
+	Belt* getBelt() { return belt; }
+
+	//! Set the boots worn by the character
+	//! @param newBoots	Boots
+	void setBoots(Boots* newBoots) { boots = newBoots; }
+
+	//! Get the boots being worn by the character
+	//! @return Boots  worn
+	Boots* getBoots() { return boots; }
+
+	//! Set the weapon wielded by the character
+	//! @param aWeapon	Weapon
+	void setWeapon(Weapon* aWeapon) { weapon = aWeapon; }
+
+	//! Get the weapon being wielded by the character
+	//! @return Weapon  wielded
+	Weapon* getWeapon() { return weapon; }
+
+	ItemContainer* lastOpenedChest;
+	Monster* lastInteractedMonster;
 
 private:
+	Map* mapPtr;
+	bool moveable;
+
+	std::string name;
 	int level;
 	int str;
 	int dex;
@@ -198,12 +303,13 @@ private:
 	int ac;
 	int attackBonus;
 	int damageBonus;
-	//Inventory inventory;
-	//Helmet helmet;
-	//Armor armor;
-	//Shield shield;
-	//Ring ring;
-	//Belt belt;
-	//Boots boots;
-	//Weapon weapon;
+
+	vector<Item*> inventory;
+	Helmet* helmet;
+	Armor* armor;
+	Shield* shield;
+	Ring* ring;
+	Belt* belt;
+	Boots* boots;
+	Weapon* weapon;
 };

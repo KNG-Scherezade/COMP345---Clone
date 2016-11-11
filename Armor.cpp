@@ -61,4 +61,3 @@ void Armor::levelUpEquipment(int a_level)
 	else
 		ac = a_level;
 }
-

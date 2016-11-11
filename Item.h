@@ -5,7 +5,6 @@
 //!  Contains stats that d20 items may have, but does not make them accessible. 
 #pragma once
 #include <string>
-#include <iostream>
 using namespace std;
 
 //! This class represents an item 
@@ -17,6 +16,10 @@ public:
 	string getName() { return name; };
 	void setName(string i_name) { name = i_name; };
 	string getType() { return type; };
+	
+	string toString();
+	void setLevel(int lvl) { level = lvl; }
+
 private:
 
  

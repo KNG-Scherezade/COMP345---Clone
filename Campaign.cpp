@@ -38,7 +38,7 @@ void Campaign::initializeDefaultCampaign()
 	//maps->at(currentMapIndex)->fillCell(1, 1, 'e');
 
 	/*for (std::vector<Map*>::size_type i = 0; i != maps->size(); i++) {
-		maps->at(i)->printMap();
+	maps->at(i)->printMap();
 	}*/
 }
 
@@ -52,7 +52,7 @@ void Campaign::addMap(Map * map)
 
 	mapsInCampaign++;
 	currentMapIndex++;
-	maps->push_back(new Map (*map));
+	maps->push_back(new Map(*map));
 	cout << "Map " << map->getMapName() << " has been added to campaign " << campaignName << endl;
 }
 

@@ -6,7 +6,7 @@
 #include <string>
 class ItemCreationDriver
 {
-public:	
+public:
 	//! Displays the item menu and accepts input to guide the item creation process
 	void showItemMenu();
 

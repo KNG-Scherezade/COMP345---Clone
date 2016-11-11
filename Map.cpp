@@ -1,9 +1,10 @@
+#include <time.h>
+
 #include "Map.h"
 #include <iostream>
 #include <string>
 #include <unordered_map>
 using namespace std;
-
 
 
 Map::Map()
@@ -17,7 +18,7 @@ Map::Map()
 
 Map::Map(Map * copyMap)
 {
-	vector<vector<std::string>>  map = vector<vector<std::string>>();
+	vector<vector<std::string>> map = vector<vector<std::string>>();
 	rows = copyMap->getRows();
 	columns = copyMap->getColumns();
 	mapName = copyMap->getMapName();
@@ -81,9 +82,11 @@ bool Map::validatePath()
 	}
 } 
 
+//!Function fills a cell checking if there are properties to the char.
 void Map::fillCell(int row, int column, string obj)
 {
 	// If the object is a start or end cell, make sure that one does not already exist.
+
 	if (obj == "s" || obj == "e") {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
@@ -93,6 +96,16 @@ void Map::fillCell(int row, int column, string obj)
 				}
 			}
 		}
+	}
+	//If it's a chest, push it into the vector
+	else if (obj == "&") {
+		ItemContainer* aChest = new ItemContainer(this, column, row);
+		srand(time(NULL));
+		chests.push_back(aChest);
+	
+	}
+	else if (obj == "m") {
+		monsters.push_back(new Monster(this, column, row));
 	}
 	map[row][column] = obj;
 }
@@ -343,4 +356,161 @@ int Map::calculateNodeId(int row, int column)
 int Map::calculateHeuristic(int row, int column, int endRow, int endColumn)
 {
 	return (abs(endRow - row) + abs(endColumn - column));
+}
+
+
+
+
+
+//! Returns an int code based off of the current standing square.
+//! O is -2		 s is -1	# is 0		e is 1		& is 2		^ is 3		error space is the int of character ?
+int Map::checkStandingSpace(int col, int row) {
+	if (col < 0 || col >= columns || row < 0 || row >= rows) return '?';
+
+	int spaceState;
+	if (map[row][col] == "m") spaceState = -3;
+	else if (map[row][col] == "O") spaceState = -2;
+	else if (map[row][col] == "s") spaceState = -1;
+	else if (map[row][col] == " ") spaceState = 0;
+	else if (map[row][col] == "e") spaceState = 1;
+	else if (map[row][col] == "&") spaceState = 2;
+	else if (map[row][col] == "^") spaceState = 3;
+	else spaceState = '?';
+
+	return spaceState;
+}
+
+
+
+//! Return a bool indicating whether or not the specified cell is occupied with a '#' or 'e' or 's'.
+//! Reverses the order of arguments are reversed to represent x and y
+bool Map::isFunctionallyOccupied(int col, int row)
+{
+	if (col < 0 || col >= columns || row < 0 || row >= rows) return true;
+	else return (map[row][col] != " " && map[row][col] != "e" && map[row][col] != "s");
+}
+
+
+//! A currently unused function designed to check available squares within the characters moverate
+void Map::createMoveSpaceVector(std::vector <std::vector<int>>* validSpaces, int initialPosition[], int moveRate) {
+	int sideMove = 0;
+	int upMove = moveRate;
+	Node startPoint(calculateNodeId(initialPosition[1], initialPosition[0]), initialPosition[1], initialPosition[0]);
+
+	//CARDINAL DIRECTION NORTH
+	for (int i = 0; i < moveRate; i++) {
+		for (int j = 0; j < sideMove; j++) {//from the side
+			for (int k = -upMove; k < 0; k++) {//from the top
+				Node endPoint(calculateNodeId(initialPosition[0] + j, initialPosition[1] + k), initialPosition[0] + j, initialPosition[1] + k);
+				bool valid = findValidPath(&startPoint, &endPoint);
+				if (valid) validSpaces->push_back({ initialPosition[0] + j, initialPosition[1] + k });
+			}
+			upMove++;
+			sideMove++;
+		}
+	}
+	//CARDINAL DIRECTION EAST
+	for (int i = 0; i < moveRate; i++) {
+		for (int k = -upMove; k < 0; k++) {//from the top
+			for (int j = sideMove; j > 0; j--) {//from the side
+				Node endPoint(calculateNodeId(initialPosition[0] + j, initialPosition[1] + k), initialPosition[0] + j, initialPosition[1] + k);
+				bool valid = findValidPath(&startPoint, &endPoint);
+				if (valid) validSpaces->push_back({ initialPosition[0] + j, initialPosition[1] + k });
+			}
+			upMove++;
+			sideMove--;
+		}
+	}
+	//CARDINAL DIRECTION SOUTH
+	for (int i = 0; i < moveRate; i++) {
+		for (int j = 0; j > -sideMove; j--) {//from the side
+			for (int k = upMove; k > 0; k--) {//from the bottom
+				Node endPoint(calculateNodeId(initialPosition[0] + j, initialPosition[1] + k), initialPosition[0] + j, initialPosition[1] + k);
+				bool valid = findValidPath(&startPoint, &endPoint);
+				if (valid) validSpaces->push_back({ initialPosition[0] + j, initialPosition[1] + k });
+			}
+			upMove--;
+			sideMove--;
+		}
+	}
+	//CARDINAL DIRECTION WEST
+	for (int i = 0; i < moveRate; i++) {
+		for (int k = 0; k < upMove; k++) {
+			for (int j = 0; j > -sideMove; j--) {
+				Node endPoint(calculateNodeId(initialPosition[0] + j, initialPosition[1] + k), initialPosition[0] + j, initialPosition[1] + k);
+				bool valid = findValidPath(&startPoint, &endPoint);
+				if (valid) validSpaces->push_back({ initialPosition[0] + j, initialPosition[1] + k });
+			}
+			upMove--;
+			sideMove++;
+		}
+	}
+}
+
+void Map::setCharacterPosition(int pos[]) {
+	characterPosition[0] = pos[0];
+	characterPosition[1] = pos[1];
+}
+void Map::setCurrentSquare(int cState) {
+	currentSquare = cState;
+}
+
+void Map::setCharacter(Character *chara) {
+	character = chara;
+}
+
+ItemContainer* Map::getChestAtPosition(int x, int y) {
+	for (int i = 0; i < chests.size(); i++) {
+		if (chests.at(i)->getPosition()[0] == x && chests.at(i)->getPosition()[1] == y) {
+			return chests.at(i);
+		}
+	}
+
+	std::cout << "COULD NOT FIND CHEST AT " << x << " " << y << "\n";
+	return new ItemContainer(this, 0, 0);
+}
+
+Monster* Map::getMonstersAtPosition(int x, int y) {
+	for (int i = 0; i < monsters.size(); i++) {
+		if (monsters.at(i)->getPosition()[0] == x && monsters.at(i)->getPosition()[1] == y) {
+			return monsters.at(i);
+		}
+	}
+	std::cout << "COULD NOT FIND MONSTER AT " << x << " " << y << "\n";
+	return new Monster();
+}
+
+std::vector<ItemContainer*> Map::getChests() {
+	return chests;
+}
+
+//stored as x y
+int* Map::getCharacterPosition() {
+	return characterPosition;
+}
+
+int Map::getCharacterLevel() {
+	return character->getLevel();
+}
+
+vector<vector<std::string>> Map::getMap() {
+	return map;
+}
+int Map::getCurrentSquare() {
+	return currentSquare;
+}
+Character* Map::getCharacter() {
+	return character;
+}
+
+
+
+void Map::attach(Observer* obs) {
+	listeners.push_back(obs);
+}
+void Map::notify() {
+	for each (Observer* obs in listeners)
+	{
+		obs->update();
+	}
 }

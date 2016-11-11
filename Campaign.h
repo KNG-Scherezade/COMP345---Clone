@@ -27,7 +27,7 @@ public:
 
 	//! Returns a pointer to the vector of maps int the campaign
 	vector<Map*>* getMaps();
-	
+
 	//! Adds a new map to the campaign
 	//! @param	map	New map to add to the vector of maps
 	void addMap(Map *map);
@@ -62,4 +62,3 @@ private:
 	//! Name of the campaign
 	string campaignName;
 };
-

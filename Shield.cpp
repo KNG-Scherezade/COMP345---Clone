@@ -10,7 +10,7 @@
 //! Default shield constructor sets stats to 1
 Shield::Shield()
 {
-	ac = 1; 
+	ac = 1;
 	level = 1;
 	name = "unknown";
 	type = "shield";
@@ -62,4 +62,3 @@ void Shield::levelUpEquipment(int h_level)
 	else
 		ac = h_level;
 }
-

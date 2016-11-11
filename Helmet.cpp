@@ -77,8 +77,3 @@ void Helmet::levelUpEquipment(int h_level)
 		ac = h_level;
 	}
 }
-
-
-
-
-

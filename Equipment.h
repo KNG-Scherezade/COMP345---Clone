@@ -17,4 +17,3 @@ public:
 	void setLevel(int e_level) { level = e_level; };
 	int getLevel() { return level; };
 };
-

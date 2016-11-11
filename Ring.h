@@ -28,4 +28,3 @@ public:
 	void setCharisma(int r_cha) { charisma = r_cha; };
 	void setConstitution(int r_con) { constitution = r_con; };
 };
-

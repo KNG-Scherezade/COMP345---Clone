@@ -1,4 +1,4 @@
-//!@file Belt.cpp
+// !@file Belt.cpp
 //!  @brief Implementation of belt equipment
 //!
 //!  This class represents the belt that is equipped or carried by a character

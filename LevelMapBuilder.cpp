@@ -206,4 +206,3 @@ void LevelMapBuilder::printMonsters(vector<Monster>* monsters)
 		monsterCounter++;
 	}
 }
-

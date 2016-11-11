@@ -9,5 +9,5 @@ public:
 	ItemGenerator();
 	~ItemGenerator();
 	Item generateItem(int level);
+	Item* generateItemPtr(int level);
 };
-

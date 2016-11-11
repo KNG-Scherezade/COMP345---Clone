@@ -19,4 +19,3 @@ public:
 	bool validateEquipment();
 	void levelUpEquipment(int a_level);
 };
-

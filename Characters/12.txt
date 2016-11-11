@@ -1,6 +1,6 @@
 type: Fighter
 name: 12
-level: 3
+level: 4
 str: 0
 dex: 0
 con: 0
@@ -9,3 +9,10 @@ wis: 0
 cha: 0
 hp: 0
 max hp: 0
+helmet: -
+armor: -
+ring: -
+belt: -
+boots: -
+shield: -
+weapon: -

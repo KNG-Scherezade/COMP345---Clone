@@ -1,4 +1,4 @@
-//! @file 
+ï»¿//! @file 
 //! @brief Driver file to create and execute the test suite and to launch the Map and Campaign Editor
 //!
 //! Brief instruction on how to set CppUnit:
@@ -8,7 +8,7 @@
 //!
 //!	 1. Unpack the CppUnit archive (https://sourceforge.net/projects/cppunit/files/cppunit/1.12.1/) to a directory of your choice, in this example I assume it is D:\. 
 //!  2. Go to D:/cppunit-1.12.1/src and open the CppUnitLibraries.dsw in Visual Studio.
-//!  3. Select the cppunit project in the Solution Explorer and go to 'Project > Properties > Configuration Properties > Librarian > General. Put "Debug\cppunit.lib" in the ‘Output FileEtextbox. 
+//!  3. Select the cppunit project in the Solution Explorer and go to 'Project > Properties > Configuration Properties > Librarian > General. Put "Debug\cppunit.lib" in the â€˜Output FileÂEtextbox. 
 //!  4. Right-click on the cppunit project in the Solution Explorer pane and choose Build.
 //!  5. After successful compilation, D:/cppunit-1.12.1/lib/cppunit.lib is produced which you then need to setup the Visual Studio Linker with (see below).
 
@@ -20,12 +20,12 @@
 //!	  3. Go to 'Project > Properties > Linker > Input'. Put "D:\cppunit-1.12.1\lib\cppunit.lib" in the 'Additional Dependences' text box.
 //!	  4. Go to 'Project > Properties > Build Events > Post-Build Event'. Put '"$(TargetPath)"' in the 'Command Line' textbox.Put 'Unit Tests...' in the 'Description' textbox.
 
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/ui/text/TestRunner.h>
-//#include <iostream>
-//#include <sstream>
+
+#include <iostream>
+#include <sstream>
 #include <string>
+#include<fstream>
+
 #include "Map.h"
 #include "Campaign.h"
 #include "MapDirector.h"
@@ -35,6 +35,19 @@
 #include "CharacterDriver.h"
 #include "Character.h"
 #include "Fighter.h"
+#include "MonsterObserver.h"
+
+#include "MapListings.h"
+
+#include "CharacterListings.h"
+#include "MapObserver.h"
+#include "Boots.h"
+#include "Ring.h"
+
+#include "ItemGenerator.h"
+
+#include <iostream>
+
 using namespace std;
 //adding comment just so i could push
 //! Runs the driver to launch the map and campaign editor.
@@ -42,6 +55,9 @@ void runDriver();
 
 //! Shows the main menu for the map and campaign editor.
 void showMainMenuForMapAndCampaign();
+
+//! Start the main game demo.
+int playDriver();
 
 //! Allows the user to select which map to edit.
 //! @param	maps	Vector of all current existing maps.
@@ -136,28 +152,25 @@ int main(int argc, char* argv[])
 	/*
 	// Get the top level suite from the registry
 	CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry().makeTest();
-
 	// Adds the test to the list of test to run
 	CppUnit::TextUi::TestRunner runner;
 	runner.addTest( suite );
-
 	// Change the default outputter to a compiler error format outputter
 	runner.setOutputter( new CppUnit::CompilerOutputter( &runner.result(),
-														 std::cerr ) );
+	std::cerr ) );
 	// Run the tests.
 	bool wasSucessful = runner.run();
 	getchar();
-
 	// Return error code 1 if the one of test failed.
-	 return wasSucessful ? 0 : 1;
-	 */
+	return wasSucessful ? 0 : 1;
+	*/
 	runDriver();
 	//return 0;
 }
 
 //! Shows a TUI (Text User Interface) to the user to allow them to select different options.
 void showMainMenuForMapAndCampaign() {
-	
+
 	//Character variables
 	Character* character = NULL;
 
@@ -216,6 +229,7 @@ void showMainMenuForMapAndCampaign() {
 		cout << "Enter 15 to add items to inventory.\n";
 		cout << "Enter 16 to equip an item.\n";
 		cout << "Enter 17 to unequip an item.\n";
+		cout << "Enter 20 to play the game.\n";
 		getline(cin, input);
 		stringstream myStream(input);
 		if (myStream >> option) {
@@ -273,8 +287,8 @@ void showMainMenuForMapAndCampaign() {
 			case 9:
 				cout << "\n\n";
 				icd.showLoadMenu();
-				break;	
-			
+				break;
+
 			case 10:
 				cout << "\n\n";
 				character = cd.createACharacter();
@@ -338,6 +352,10 @@ void showMainMenuForMapAndCampaign() {
 				else
 					cout << "No character selected." << endl;
 				break;
+
+			case 20:
+				cout << "\n\n";
+				playDriver();
 
 			default:
 				cout << "\n\n";
@@ -1054,6 +1072,157 @@ string inputName()
 		}
 	} while (!isInputValid);
 	return name;
+}
+
+
+
+
+//! Code that was written without knowledge of Connor's classes.
+//! Next revision will be a combination of said classes with my own work
+int playDriver() {
+	// *********************************************************INITIALIZATION AND SELECTION OF MAP AND CHARACTER *********************************************************
+
+	Map* map = nullptr;
+	Character* chara = nullptr;
+
+	std::cout << "------------------------------\n";
+
+	MapListings* mapChoiceOptions = new MapListings();
+	CharacterListings* characterChoiceOptions = new CharacterListings();
+
+	std::cout << "------------------------------\n";
+
+	if (mapChoiceOptions->getNumberOfOptions() == 0 && characterChoiceOptions->getNumberOfOptions() == 0) {
+		std::cout << "No maps or characters\nGo make some.\n";
+		getchar();
+		return -1;
+	}
+	else if (mapChoiceOptions->getNumberOfOptions() == 0 || characterChoiceOptions->getNumberOfOptions() == 0) {
+		std::cout << "No maps xor characters\nGo make some.\n";
+		getchar();
+		return -2;
+	}
+
+	bool repeat = true;
+	while (repeat) {
+
+		mapChoiceOptions->displayMaps();
+		map = mapChoiceOptions->acceptInput4Map();
+		MapObserver* mo1 = new MapObserver(map);
+		std::cout << mo1->printMap() << "\n";
+
+		characterChoiceOptions->displayCharacters();
+		chara = characterChoiceOptions->acceptInput4Character();
+		std::cout << chara->toString();
+		//Map pointer has not been set yet
+
+		std::cout << "\nYou're fine with this, right ?\nGive a 1 if yes and a 0 if no\n";
+		char confirmation[9001] = "";
+		std::cin >> confirmation;
+
+		if (strcmp("0", confirmation) == 0) {
+			std::cout << "\nWe'll do it again then...\n";
+			delete mo1;
+		}
+		else if (strcmp("1", confirmation) == 0) {
+			std::cout << "\nLets move on...\n";
+			//Set the map pointer
+			chara->postInitialize(map);
+			repeat = false;
+		}
+		else
+			std::cout << "What is a " << confirmation << " ?\n";
+	}
+	delete mapChoiceOptions;
+	delete characterChoiceOptions;
+	// ******************************************************************************************************************
+
+
+
+
+
+
+
+
+	// ********************************************************* START OF GAME LOOP AND GAME PLAY *********************************************************
+
+	map->notify();
+	for each(ItemContainer* ic in map->getChests()) {
+		ChestObserver* co = new ChestObserver(ic);
+	}
+	for each(Monster* mon in map->getMonsters()) {
+		MonsterObserver* mo = new MonsterObserver(mon);
+	}
+	bool gameRunning = true;
+	while (gameRunning) {
+
+
+
+		char direction;
+		std::cout << "Enter A Direction To Move of \"l, r, u or d\". Enter \"i\" for inventory or enter \"e\" to interact:\n";
+		std::cin >> direction;
+
+
+		//INTERACT WITH INVENTORY
+		if (direction == 'i' || direction == 'I') {
+			bool lookingAtThings = true;
+			while (lookingAtThings) {
+				std::cout << "\t\nYOUR INVENTORY IS AS FOLLOWS: \n" << std::endl;
+				chara->printInventory();
+				std::cout << "\t\nYOUR EQUIPS ARE AS FOLLOWS: \n" << std::endl;
+				chara->printEquipped();
+				std::cout << "\n\tEnter any key to continue\n" << std::endl;
+				char stopVar;//since getchar was failing
+				std::cin >> stopVar;
+				lookingAtThings = false;
+			}
+
+		}
+
+		//INTERACT WITH EXIT POINT
+		else if (direction == 'e' || direction == 'E') {
+			if (map->getCurrentSquare() == 1) {
+				chara->setLevel(chara->getLevel() + 1);
+				CharacterDriver cd;
+				cd.save(chara, chara->getName());
+
+				std::cout << "\n\nYou Move to an new Room AND GAIN A LEVEL\n";
+				gameRunning = false;
+				break;
+			}
+
+			// CHECKS FOR LOOK DIRECTIONS
+			// CHARACTER CREATES SIMPLE COUT LINES. THIS FILE DOES COMPLEX ONES
+			std::cout << "Enter A Direction To Interact of \"l, r, u or d\". U and D allow diagonals:\n";
+			std::cin >> direction;
+			int msg = chara->checkLook(direction);
+
+
+
+			//CHEST INTERACTION
+			if (msg == 2) {
+				chara->lastOpenedChest->notify();
+			}
+
+			//MONSTER INTERACTION
+			else if (msg == -3) {
+				chara->lastInteractedMonster->notify();
+			}
+			map->notify();
+		}
+		//MOVEMENT CHECKS
+		else {
+			chara->checkMove(direction);
+		}
+	}
+
+
+	std::cout << "GAME OVER\n";
+	getchar();	getchar();
+
+	// ********************************************************* *********************************************************
+
+
 }
 
 //! Driver that calls showMainMenuForMapAndCampaign to run the Map and Campaign editor

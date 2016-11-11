@@ -17,4 +17,3 @@ public:
 	void selectItemToEquip(Character* c);
 	void selectItemToUnequip(Character* c);
 };
-

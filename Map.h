@@ -1,5 +1,11 @@
 #pragma once
 #include "Node.h"
+#include "Character.h"
+#include "ItemContainer.h"
+#include "Observable.h"
+#include "Monster.h"
+#include "ChestObserver.h"
+
 #include <vector>
 using namespace std;
 
@@ -22,7 +28,11 @@ using namespace std;
 //!				the char "m" represents a monster. At the moment, any other character will indicate that the cell is not
 //!				traversable. In the future, enums may be implemented to force specific values into the map instead of
 //!				stand alone characters.
-class Map
+class ItemContainer;
+class Character;
+class Monster;
+
+class Map : public Subject
 {
 public:
 	Map();
@@ -101,8 +111,44 @@ public:
 	//!
 	//! @return	string in the row and column sent as parameters
 	string get(int row, int column);
-	
+
+	bool isFunctionallyOccupied(int col, int row);	
+	void createMoveSpaceVector(std::vector <std::vector<int>>* validSpaces, int initialPosition[], int moveRate);
+	int checkStandingSpace(int col, int row);
+
+	void setCurrentSquare(int clearState);
+	void setCharacterPosition(int pos[]);
+	void setCharacter(Character *chara);
+
+	vector<vector<std::string>> getMap();
+	Character* getCharacter();
+	int* getCharacterPosition();
+	int getCharacterLevel();
+	int getCurrentSquare();
+
+	std::vector<Monster*> getMonsters() { return monsters; }
+
+	std::vector<ItemContainer*> getChests();
+	ItemContainer* getChestAtPosition(int x, int y);
+	Monster* getMonstersAtPosition(int x, int y);
+
+	//Subject inheritence / observer methods
+	void attach(Observer* obs);
+	void notify();
+
+	//! Allocates memory for the map and sets the cell to empty values.
+	//! Empty cells are represented by an empty space character (' ').
+	void initializeMap();
+
 private:
+
+	int characterPosition[2];
+	Character* character;
+	int currentSquare;
+
+	std::vector<ItemContainer*> chests;
+
+	std::vector<Monster*> monsters;
 	//! Number of rows in the map.
 	int rows;
 
@@ -117,10 +163,6 @@ private:
 
 	//! name of map
 	string mapName;
-
-	//! Allocates memory for the map and sets the cell to empty values.
-	//! Empty cells are represented by an empty space character (' ').
-	void initializeMap();
 
 	//! Dealocates memory for the map.
 	void deleteMap();

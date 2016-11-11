@@ -22,5 +22,3 @@ public:
 	void printMonsters(vector<Monster>* monsters);
 };
 
-
-

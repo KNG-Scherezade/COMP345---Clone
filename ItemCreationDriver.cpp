@@ -257,7 +257,7 @@ Item ItemCreationDriver::loadItem(string fileName)
 		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
 		ss << nextAttribute;
-		wis= stoi(nextAttribute);
+		wis = stoi(nextAttribute);
 		Helmet helmet = Helmet(ac, intel, wis, level);
 		helmet.setName(name);
 		return helmet;
@@ -373,7 +373,7 @@ Item ItemCreationDriver::loadItem(string fileName)
 		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
 		ac = stoi(nextAttribute);
-		Shield shield= Shield(ac, level);
+		Shield shield = Shield(ac, level);
 		shield.setName(name);
 		return shield;
 	}
@@ -395,7 +395,7 @@ Item ItemCreationDriver::loadItem(string fileName)
 		getline(infile, line);
 		nextAttribute = line.substr(line.find(":") + 2, line.length());
 		dmg = stoi(nextAttribute);
-		Weapon weapon= Weapon(atk, dmg, level);
+		Weapon weapon = Weapon(atk, dmg, level);
 		weapon.setName(name);
 		return weapon;
 	}
@@ -440,7 +440,7 @@ void ItemCreationDriver::saveItem(Item item, string fileName)
 	}
 	else if (item.getType() == "belt")
 	{
-		Belt belt= static_cast<Belt&>(item);
+		Belt belt = static_cast<Belt&>(item);
 		belt.setName(belt.getName());
 		outfile.open(fileName + ".txt");
 		outfile.clear();
@@ -452,7 +452,7 @@ void ItemCreationDriver::saveItem(Item item, string fileName)
 	}
 	else if (item.getType() == "boots")
 	{
-		Boots boots= static_cast<Boots&>(item);
+		Boots boots = static_cast<Boots&>(item);
 		boots.setName(boots.getName());
 		outfile.open(fileName + ".txt");
 		outfile.clear();
@@ -460,11 +460,11 @@ void ItemCreationDriver::saveItem(Item item, string fileName)
 		outfile << "name: " << boots.getName() << "\n";
 		outfile << "level: " << boots.getLevel() << "\n";
 		outfile << "dexterity: " << boots.getDexterity() << "\n";
-		outfile << "armor class: " << boots.getArmorClass()<< "\n";
+		outfile << "armor class: " << boots.getArmorClass() << "\n";
 	}
 	else if (item.getType() == "ring")
 	{
-		Ring ring= static_cast<Ring&>(item);
+		Ring ring = static_cast<Ring&>(item);
 		ring.setName(ring.getName());
 		outfile.open(fileName + ".txt");
 		outfile.clear();
@@ -472,14 +472,14 @@ void ItemCreationDriver::saveItem(Item item, string fileName)
 		outfile << "name: " << ring.getName() << "\n";
 		outfile << "level: " << ring.getLevel() << "\n";
 		outfile << "armor class: " << ring.getArmorClass() << "\n";
-		outfile << "wisdom: " << ring.getWisdom()<< "\n";
-		outfile << "strength: " << ring.getStrength()<< "\n";
-		outfile << "charisma: " << ring.getCharisma()<< "\n";
-		outfile << "constitution: " << ring.getConstitution()<< "\n";
+		outfile << "wisdom: " << ring.getWisdom() << "\n";
+		outfile << "strength: " << ring.getStrength() << "\n";
+		outfile << "charisma: " << ring.getCharisma() << "\n";
+		outfile << "constitution: " << ring.getConstitution() << "\n";
 	}
 	else if (item.getType() == "shield")
 	{
-		Shield shield= static_cast<Shield&>(item);
+		Shield shield = static_cast<Shield&>(item);
 		shield.setName(shield.getName());
 		outfile.open(fileName + ".txt");
 		outfile.clear();
@@ -490,7 +490,7 @@ void ItemCreationDriver::saveItem(Item item, string fileName)
 	}
 	else if (item.getType() == "weapon")
 	{
-		Weapon weapon= static_cast<Weapon&>(item);
+		Weapon weapon = static_cast<Weapon&>(item);
 		weapon.setName(weapon.getName());
 		outfile.open(fileName + ".txt");
 		outfile.clear();
@@ -570,12 +570,12 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			}
 		}
 		else if (item.getType() == "helmet")
-		{			
+		{
 			level = enterNumber("level");
 			intel = enterNumber("intel");
 			ac = enterNumber("armor class");
 			wisdom = enterNumber("wisdom");
-			helmet = Helmet(ac, intel, wisdom, level);	
+			helmet = Helmet(ac, intel, wisdom, level);
 			if (helmet.validateEquipment() == true)
 			{
 				saveItem(helmet, item.getName());
@@ -587,7 +587,7 @@ void ItemCreationDriver::showEditDialogue(Item item)
 
 		}
 		else if (item.getType() == "belt")
-		{			
+		{
 			level = enterNumber("level");
 			str = enterNumber("strength");
 			con = enterNumber("constitution");
@@ -602,7 +602,7 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			}
 		}
 		else if (item.getType() == "boots")
-		{			
+		{
 			level = enterNumber("level");
 			dex = enterNumber("dexterity");
 			ac = enterNumber("armor class");
@@ -614,17 +614,17 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			}
 			else {
 				cout << "Boots invalid, please enter attribute values between 1 and 5" << "\n";
-			}			
+			}
 		}
 		else if (item.getType() == "ring")
-		{			
+		{
 			level = enterNumber("level");
 			ac = enterNumber("armor class");
 			wisdom = enterNumber("wisdom");
 			str = enterNumber("strength");
 			cha = enterNumber("charisma");
 			con = enterNumber("constitution");
-			ring = Ring(ac, wisdom, str, cha, con, level);		
+			ring = Ring(ac, wisdom, str, cha, con, level);
 			if (ring.validateEquipment() == true)
 			{
 				saveItem(ring, item.getName());
@@ -635,11 +635,11 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			}
 		}
 		else if (item.getType() == "weapon")
-		{			
+		{
 			level = enterNumber("level");
 			atk = enterNumber("attack");
 			dmg = enterNumber("damage");
-			weapon = Weapon(atk, dmg, level);		
+			weapon = Weapon(atk, dmg, level);
 			if (weapon.validateEquipment() == true)
 			{
 				saveItem(weapon, item.getName());
@@ -647,13 +647,13 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			}
 			else {
 				cout << "Weapon invalid, please enter attribute values between 1 and 5" << "\n";
-			}			
+			}
 		}
 		else if (item.getType() == "shield")
-		{		
+		{
 			level = enterNumber("level");
 			ac = enterNumber("armor class");
-			shield = Shield(ac, level);		
+			shield = Shield(ac, level);
 			if (shield.validateEquipment() == true)
 			{
 				saveItem(shield, item.getName());
@@ -661,9 +661,9 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			}
 			else {
 				cout << "Shield invalid, please enter attribute values between 1 and 5" << "\n";
-			}			
+			}
 		}
-	}	
+	}
 }
 
 //! Prompts the user to load an item, after the item is loaded successfully the user is prompted to edit the item
@@ -684,7 +684,7 @@ void ItemCreationDriver::showLoadMenu()
 		}
 		else if (item.getType() == "helmet")
 		{
-			Helmet helmet= static_cast<Helmet&>(item);
+			Helmet helmet = static_cast<Helmet&>(item);
 			cout << "Helmet name: " << helmet.getName() << " level: " << helmet.getLevel() << " armor class: " << helmet.getArmorClass()
 				<< " intelligence: " << helmet.getIntelligence() << " wisdom: " << helmet.getWisdom() << "\n";
 			showEditDialogue(helmet);
@@ -697,14 +697,14 @@ void ItemCreationDriver::showLoadMenu()
 		}
 		else if (item.getType() == "boots")
 		{
-			Boots boots= static_cast<Boots&>(item);
+			Boots boots = static_cast<Boots&>(item);
 			cout << "Boots name: " << boots.getName() << " level: " << boots.getLevel() << " Dexterity: " << boots.getDexterity()
 				<< " Armor Class: " << boots.getArmorClass() << "\n";
 			showEditDialogue(boots);
 		}
 		else if (item.getType() == "ring")
 		{
-			Ring ring= static_cast<Ring&>(item);
+			Ring ring = static_cast<Ring&>(item);
 			cout << "Ring name: " << ring.getName() << " level: " << ring.getLevel() << " Armor Class: " << ring.getArmorClass()
 				<< " Wisdom: " << ring.getWisdom() << " Strength: " << ring.getStrength() << " Charisma: " << ring.getCharisma() << " Constitution: " << ring.getConstitution() << "\n";
 			showEditDialogue(ring);
@@ -717,7 +717,7 @@ void ItemCreationDriver::showLoadMenu()
 		}
 		else if (item.getType() == "belt")
 		{
-			Belt belt= static_cast<Belt&>(item);
+			Belt belt = static_cast<Belt&>(item);
 			cout << "Belt name: " << belt.getName() << " level: " << belt.getLevel() << " strength: " << belt.getStrength()
 				<< " constitution: " << belt.getConstitution() << "\n";
 			showEditDialogue(belt);

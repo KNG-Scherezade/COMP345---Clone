@@ -18,7 +18,7 @@ public:
 
 	//! Sets the Node's heuristic value.
 	//! @param	newHeuristic	The new heuristic value to set.
-	void setHeuristic(int newHeuristic); 
+	void setHeuristic(int newHeuristic);
 
 	//! Sets the Node's id.
 	//! @param	newId	The new id value to set.
@@ -68,4 +68,3 @@ private:
 	//! bool indicating whether or not the Node can be traversed.
 	bool traversable;
 };
-

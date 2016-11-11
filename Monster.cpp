@@ -12,7 +12,7 @@ Monster::Monster()
 	attack = 1;
 	level = 1;
 	dex = 1;
-	str = 1; 
+	str = 1;
 	con = 1;
 	intel = 1;
 	wis = 1;
@@ -26,9 +26,34 @@ Monster::Monster(int m_level)
 	levelUpStats(m_level);
 }
 
-Monster::~Monster()
+Monster::Monster(Map* map, int x, int y)
 {
+	position[0] = x;
+	position[1] = y;
+	mapPtr = map;
+
+	hitpoints = 1;
+	attack = 1;
+	level = 1;
+	dex = 1;
+	str = 1; 
+	con = 1;
+	intel = 1;
+	wis = 1;
+	cha = 1;
 }
+
+//! Constructor assigns stats based on level
+//! @param m_level sets stats based on this level
+Monster::Monster(Map* map, int x, int y, int m_level)
+{
+	position[0] = x;
+	position[1] = y;
+	mapPtr = map;
+	levelUpStats(m_level);
+}
+
+Monster::~Monster(){}
 
 //! Assigns stats based on level
 //! @param m_level sets stats based on this level
@@ -44,3 +69,14 @@ void Monster::levelUpStats(int m_level)
 	wis = m_level;
 	cha = m_level;
 }
+
+//! generic observer functions done in super
+void Monster::notify() {
+	for each(Observer* obs in listeners) {
+		obs->update();
+	}
+}
+void Monster::attach(Observer* obs) {
+	listeners.push_back(obs);
+}
+

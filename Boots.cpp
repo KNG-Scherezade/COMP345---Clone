@@ -34,7 +34,7 @@ Boots::Boots(int b_level)
 {
 	name = "unknown";
 	type = "boots";
-	
+
 	levelUpEquipment(b_level);
 }
 

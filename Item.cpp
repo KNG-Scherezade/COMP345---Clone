@@ -22,3 +22,7 @@ Item::Item()
 Item::~Item()
 {
 }
+std::string Item::toString() {
+	return "" + getName() + " of a level " + to_string(level) + " fighter:\nAC: " + to_string(ac) + "\nwis: "
+		+ to_string(wis) + "\nstr: " + to_string(str) + "\ncharisma: " + to_string(charisma) + "\nCon: " + to_string(constitution) + "\n";
+}
