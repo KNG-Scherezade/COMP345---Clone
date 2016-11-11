@@ -1,0 +1,11 @@
+type: Fighter
+name: 12
+level: 3
+str: 0
+dex: 0
+con: 0
+int: 0
+wis: 0
+cha: 0
+hp: 0
+max hp: 0

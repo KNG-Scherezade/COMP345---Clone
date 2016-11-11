@@ -1,0 +1,11 @@
+type: Fighter
+name: 123
+level: 330
+str: 10
+dex: 17
+con: 3
+int: 9
+wis: 10
+cha: 12
+hp: 334
+max hp: 334
