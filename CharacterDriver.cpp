@@ -376,7 +376,7 @@ Character* CharacterDriver::showLoadMenu()
 	std::string input;
 	cout << "\nEnter the filename of the character (without file extension)\n";
 	getline(cin, input);
-	Character* c = load(input + ".txt");
+	Character* c = load("./characters/" + input + ".txt");
 
 	if (c == NULL)
 	{
