@@ -1,6 +1,7 @@
 #include "CharacterDriver.h"
 #include "Character.h"
 #include "Fighter.h"
+#include "ItemCreationDriver.h"
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -19,6 +20,8 @@ CharacterDriver::~CharacterDriver()
 //! @param filename	String representing a file name
 void CharacterDriver::save(Character* c, std::string filename)
 {
+	Item* temp;
+
 	ofstream outfile;
 	outfile.open(filename + ".txt");
 	outfile.clear();
@@ -33,13 +36,42 @@ void CharacterDriver::save(Character* c, std::string filename)
 	outfile << "cha: " << c->getCha() << endl;
 	outfile << "hp: " << c->getHp() << endl;
 	outfile << "max hp: " << c->getMaxHp() << endl;
-	outfile << "helmet: " << c->getHelmet() << endl;
-	outfile << "armor: " << c->getArmor() << endl;
-	outfile << "ring: " << c->getRing() << endl;
-	outfile << "belt: " << c->getBelt() << endl;
-	outfile << "boots: " << c->getBoots() << endl;
-	outfile << "shield: " << c->getShield() << endl;
-	outfile << "weapon: " << c->getWeapon() << endl;
+
+	temp = c->getHelmet();
+	if (temp != NULL)
+		outfile << "helmet: " << c->getHelmet()->getName() << endl;
+	else
+		outfile << "helmet: -" << endl;
+	temp = c->getArmor();
+	if (temp != NULL)
+	outfile << "armor: " << c->getArmor()->getName() << endl;
+	else
+		outfile << "armor: -" << endl;
+	temp = c->getRing();
+	if (temp != NULL)
+	outfile << "ring: " << c->getRing()->getName() << endl;
+	else
+		outfile << "ring: -" << endl;
+	temp = c->getBelt();
+	if (temp != NULL)
+	outfile << "belt: " << c->getBelt()->getName() << endl;
+	else
+		outfile << "belt: -" << endl;
+	temp = c->getBoots();
+	if (temp != NULL)
+	outfile << "boots: " << c->getBoots()->getName() << endl;
+	else
+		outfile << "boots: -" << endl;
+	temp = c->getShield();
+	if (temp != NULL)
+	outfile << "shield: " << c->getShield()->getName() << endl;
+	else
+		outfile << "shield: -" << endl;
+	temp = c->getWeapon();
+	if (temp != NULL)
+	outfile << "weapon: " << c->getWeapon()->getName() << endl;
+	else
+		outfile << "weapon: -" << endl;
 
 
 	outfile.close();
@@ -61,6 +93,9 @@ Character* CharacterDriver::load(std::string filename) {
 	int cha;
 	int hp;
 	int maxHp;
+	std::string temp;
+
+	ItemCreationDriver icd = ItemCreationDriver();
 
 	std::string line;
 	ifstream infile;
@@ -118,6 +153,64 @@ Character* CharacterDriver::load(std::string filename) {
 	getline(infile, line);
 	maxHp = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setMaxHp(maxHp);
+	//helmet
+	getline(infile, line);
+	temp = line.substr(line.find(":") + 2, line.length());
+	if (temp != "-") {
+		Helmet helmet = static_cast<Helmet&>(icd.loadItem(temp + ".txt"));
+		Helmet* helmPtr = &helmet;
+		c->setHelmet(helmPtr);
+	}
+	//armor
+	getline(infile, line);
+	temp = line.substr(line.find(":") + 2, line.length());
+	if (temp != "-") {
+		Armor armor = static_cast<Armor&>(icd.loadItem(temp + ".txt"));
+		Armor* armPtr = &armor;
+		c->setArmor(armPtr);
+	}
+	//ring
+	getline(infile, line);
+	temp = line.substr(line.find(":") + 2, line.length());
+	if (temp != "-") {
+		Ring ring = static_cast<Ring&>(icd.loadItem(temp + ".txt"));
+		Ring* ringPtr = new Ring();
+		ringPtr->setName(ring.getName());
+		c->setRing(ringPtr);
+		//delete ringPtr;
+	}
+	//belt
+	getline(infile, line);
+	temp = line.substr(line.find(":") + 2, line.length());
+	if (temp != "-") {
+		Belt belt = static_cast<Belt&>(icd.loadItem(temp + ".txt"));
+		Belt* beltPtr = &belt;
+		c->setBelt(beltPtr);
+	}
+	//boots
+	getline(infile, line);
+	temp = line.substr(line.find(":") + 2, line.length());
+	if (temp != "-") {
+		Boots boots = static_cast<Boots&>(icd.loadItem(temp + ".txt"));
+		Boots* bootPtr = &boots;
+		c->setBoots(bootPtr);
+	}
+	//shield
+	getline(infile, line);
+	temp = line.substr(line.find(":") + 2, line.length());
+	if (temp != "-") {
+		Shield shield = static_cast<Shield&>(icd.loadItem(temp + ".txt"));
+		Shield* shPtr = &shield;
+		c->setShield(shPtr);
+	}
+	//weapon
+	getline(infile, line);
+	temp = line.substr(line.find(":") + 2, line.length());
+	if (temp != "-") {
+		Weapon weapon = static_cast<Weapon&>(icd.loadItem(temp + ".txt"));
+		Weapon* weapPtr = &weapon;
+		c->setWeapon(weapPtr);
+	}
 
 	infile.close();
 
@@ -168,7 +261,7 @@ Character* CharacterDriver::createACharacter() {
 	string name;
 	int level;
 	bool isInputValid;
-	Character* c;
+	Character* c = NULL;
 
 	// Variable that will hold the option for the text based menu
 	int option;
@@ -215,12 +308,14 @@ Character* CharacterDriver::createACharacter() {
 		case 2:
 			cout << "Go back to main menu" << endl;
 			cout << "\n\n";
-			return NULL;
+			return c;
 			break;
 		default:
+			return c;
 			break;
 		}
 	}
+	return c;
 }
 
 //! Accepts input to use as the name of the object being worked on (map, campaign, character)
@@ -279,7 +374,7 @@ Character* CharacterDriver::showLoadMenu()
 	cout << "\nEnter the filename of the character (without file extension)\n";
 	getline(cin, input);
 	Character* c = load(input + ".txt");
-	// Returned item has name error if an error occured, an error message is also shown in the previous method
+	
 	if (c == NULL)
 	{
 		cout << "\nNo character of that name exists\n" << endl;

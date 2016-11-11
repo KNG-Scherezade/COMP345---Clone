@@ -218,7 +218,7 @@ void Character::printEquipped()
 		cout << "[1] Armor: " << armor->getName() << endl;
 	else
 		cout << "[1] Armor: None" << endl;
-	if (ring != NULL)
+	if (ring != NULL) 
 		cout << "[2] Ring: " << ring->getName() << endl;
 	else
 		cout << "[2] Ring: None" << endl;
