@@ -100,6 +100,7 @@ Character* CharacterDriver::load(std::string filename) {
 
 	std::string line;
 	ifstream infile;
+
 	infile.open(filename);
 	// return if the file name is wrong
 	if (infile.is_open() == false)
@@ -108,54 +109,57 @@ Character* CharacterDriver::load(std::string filename) {
 		// wrong file name, return NULL
 		return NULL;
 	}
-	getline(infile, line);
+
+	try {
+
+	std::getline(infile, line);
 	std::string type = line.substr(line.find(":") + 2, line.length());
 
 	if (type == "Fighter")
 		c = new Fighter();
 
 	//name
-	getline(infile, line);
+	std::getline(infile, line);
 	name = line.substr(line.find(":") + 2, line.length());
 	c->setName(name);
 	//level
-	getline(infile, line);
+	std::getline(infile, line);
 	level = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setLevel(level);
 	//str
-	getline(infile, line);
+	std::getline(infile, line);
 	str = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setStr(str);
 	//dex
-	getline(infile, line);
+	std::getline(infile, line);
 	dex = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setDex(dex);
 	//con
-	getline(infile, line);
+	std::getline(infile, line);
 	con = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setCon(con);
 	//intel
-	getline(infile, line);
+	std::getline(infile, line);
 	intel = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setIntel(intel);
 	//wis
-	getline(infile, line);
+	std::getline(infile, line);
 	wis = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setWis(wis);
 	//cha
-	getline(infile, line);
+	std::getline(infile, line);
 	cha = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setCha(cha);
 	//hp
-	getline(infile, line);
+	std::getline(infile, line);
 	hp = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setHp(hp);
 	//max hp
-	getline(infile, line);
+	std::getline(infile, line);
 	maxHp = stoi(line.substr(line.find(":") + 2, line.length()));
 	c->setMaxHp(maxHp);
 
-	getline(infile, line);
+	std::getline(infile, line);
 	if (!infile.eof()) {
 		temp = line.substr(line.find(":") + 2, line.length());
 		if (temp != "-") {
@@ -164,7 +168,7 @@ Character* CharacterDriver::load(std::string filename) {
 			c->setHelmet(helmPtr);
 		}
 		//armor
-		getline(infile, line);
+		std::getline(infile, line);
 		temp = line.substr(line.find(":") + 2, line.length());
 		if (temp != "-") {
 			Armor armor = static_cast<Armor&>(icd.loadItem(temp + ".txt"));
@@ -172,7 +176,7 @@ Character* CharacterDriver::load(std::string filename) {
 			c->setArmor(armPtr);
 		}
 		//ring
-		getline(infile, line);
+		std::getline(infile, line);
 		temp = line.substr(line.find(":") + 2, line.length());
 		if (temp != "-") {
 			Ring ring = static_cast<Ring&>(icd.loadItem(temp + ".txt"));
@@ -182,7 +186,7 @@ Character* CharacterDriver::load(std::string filename) {
 			//delete ringPtr;
 		}
 		//belt
-		getline(infile, line);
+		std::getline(infile, line);
 		temp = line.substr(line.find(":") + 2, line.length());
 		if (temp != "-") {
 			Belt belt = static_cast<Belt&>(icd.loadItem(temp + ".txt"));
@@ -190,7 +194,7 @@ Character* CharacterDriver::load(std::string filename) {
 			c->setBelt(beltPtr);
 		}
 		//boots
-		getline(infile, line);
+		std::getline(infile, line);
 		temp = line.substr(line.find(":") + 2, line.length());
 		if (temp != "-") {
 			Boots boots = static_cast<Boots&>(icd.loadItem(temp + ".txt"));
@@ -198,7 +202,7 @@ Character* CharacterDriver::load(std::string filename) {
 			c->setBoots(bootPtr);
 		}
 		//shield
-		getline(infile, line);
+		std::getline(infile, line);
 		temp = line.substr(line.find(":") + 2, line.length());
 		if (temp != "-") {
 			Shield shield = static_cast<Shield&>(icd.loadItem(temp + ".txt"));
@@ -206,7 +210,7 @@ Character* CharacterDriver::load(std::string filename) {
 			c->setShield(shPtr);
 		}
 		//weapon
-		getline(infile, line);
+		std::getline(infile, line);
 		temp = line.substr(line.find(":") + 2, line.length());
 		if (temp != "-") {
 			Weapon weapon = static_cast<Weapon&>(icd.loadItem(temp + ".txt"));
@@ -230,7 +234,10 @@ Character* CharacterDriver::load(std::string filename) {
 	c->calculateBaseAttackBonus();
 	//damage bonus
 	c->calculateDamageBonus();
-
+	}
+	catch (exception e) {
+		c = new Character();
+	}
 	return c;
 }
 
@@ -242,7 +249,7 @@ void CharacterDriver::showSaveDialogue(Character* character)
 	stringstream ss;
 	int decision;
 	cout << "Would you like to save this character?\n[1] yes\n[2] no\n";
-	getline(cin, input);
+	std::getline(cin, input);
 	ss << input;
 	if (ss >> decision)
 	{
@@ -277,7 +284,7 @@ Character* CharacterDriver::createACharacter() {
 	cout << "Enter 0 to create a character at Level 1" << endl;
 	cout << "Enter 1 to create a character at a specific Level" << endl;
 	cout << "Enter 2 to go back to the main menu" << endl;
-	getline(cin, input);
+	std::getline(cin, input);
 	stringstream myStream(input);
 	if (myStream >> option) {
 		switch (option) {
@@ -292,7 +299,7 @@ Character* CharacterDriver::createACharacter() {
 			do {
 				cout << "\n\n";
 				cout << "Please enter the desired Level of the character" << endl;
-				getline(cin, input);
+				std::getline(cin, input);
 
 				stringstream myStream(input);
 				if (myStream >> level && level >= 1) {
@@ -332,7 +339,7 @@ std::string CharacterDriver::inputName()
 	do {
 		cout << "\n";
 		cout << "Enter the name:\n";
-		getline(cin, input);
+		std::getline(cin, input);
 		name = input;
 
 		if (!name.empty()) {
@@ -341,7 +348,7 @@ std::string CharacterDriver::inputName()
 			cout << "Enter 0 to cancel\n";
 			cout << "Enter 1 to confirm\n";
 
-			getline(cin, input);
+			std::getline(cin, input);
 			stringstream myStream(input);
 			if (myStream >> option) {
 				switch (option) {
@@ -375,7 +382,7 @@ Character* CharacterDriver::showLoadMenu()
 {
 	std::string input;
 	cout << "\nEnter the filename of the character (without file extension)\n";
-	getline(cin, input);
+	std::getline(cin, input);
 	Character* c = load("./characters/" + input + ".txt");
 
 	if (c == NULL)
@@ -409,7 +416,7 @@ void CharacterDriver::selectItemToEquip(Character* c)
 
 	cout << "Select the number of the item you would like to equip." << endl;
 	c->printInventory();
-	getline(cin, input);
+	std::getline(cin, input);
 	stringstream myStream(input);
 	if (myStream >> option) {
 		if (option >= 0 && option < c->getInventory()->size()) {
@@ -429,7 +436,7 @@ void CharacterDriver::selectItemToUnequip(Character* c)
 
 	cout << "Select the number of the item you would like to unequip." << endl;
 	c->printEquipped();
-	getline(cin, input);
+	std::getline(cin, input);
 	stringstream myStream(input);
 	if (myStream >> option) {
 		if (option >= 0 && option < 7) {
