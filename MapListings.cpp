@@ -58,8 +58,8 @@ void MapListings::displayMaps() {
 #include <Windows.h>
 void MapListings::loadMapsToMemory() {
 
-	WIN32_FIND_DATA mapFile;
-	HANDLE directoryToSearch = FindFirstFile("./maps/*", &mapFile);
+	WIN32_FIND_DATAA mapFile;
+	HANDLE directoryToSearch = FindFirstFileA("./maps/*", &mapFile);
 
 	std::cout << "\n\nSearching Map Directory\n";
 	if (directoryToSearch)
@@ -70,7 +70,7 @@ void MapListings::loadMapsToMemory() {
 			std::string localPath = mapFile.cFileName;
 			if(localPath != "." && localPath != "..")
 				pathNames.push_back("./maps/" + localPath);
-		} while (FindNextFile(directoryToSearch, &mapFile));
+		} while (FindNextFileA(directoryToSearch, &mapFile));
 	}
 	else std::cout << "Directory ./maps/* could not be found\n";
 	std::cout << "\n";

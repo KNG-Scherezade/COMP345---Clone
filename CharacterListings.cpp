@@ -48,8 +48,8 @@ void CharacterListings::displayCharacters() {
 #include <windows.h>
 void CharacterListings::getCharacterPathNames() {
 
-	WIN32_FIND_DATA characterFile;
-	HANDLE directoryToSearch = FindFirstFile("./Characters/*", &characterFile);
+	WIN32_FIND_DATAA characterFile;
+	HANDLE directoryToSearch = FindFirstFileA("./Characters/*", &characterFile);
 
 	std::cout << "\n\nSearching Character Directory\n";
 	if (directoryToSearch)
@@ -60,7 +60,7 @@ void CharacterListings::getCharacterPathNames() {
 			std::string localPath = characterFile.cFileName;
 			if (localPath != "." && localPath != "..")
 				pathNames.push_back("./Characters/" + localPath);
-		} while (FindNextFile(directoryToSearch, &characterFile));
+		} while (FindNextFileA(directoryToSearch, &characterFile));
 	}
 	else std::cout << "Directory ./Characters/* could not be found\n";
 	std::cout << "\n";
