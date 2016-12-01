@@ -70,6 +70,8 @@ public:
 	void equip(int slot);
 	void unequip(int slot);
 
+	Map* getMap() { return mapPtr; }
+
 	//virtual std::string getType() { return ""; }
 
 	//! Set the name of the character
