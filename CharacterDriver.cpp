@@ -24,6 +24,8 @@ void CharacterDriver::save(Character* c, std::string filename)
 	Item* temp;
 
 	ofstream outfile;
+
+	// Save stats
 	outfile.open("./Characters/" + filename + ".txt");
 	outfile.clear();
 	outfile << "type: " << c->getType() << endl;
@@ -38,6 +40,7 @@ void CharacterDriver::save(Character* c, std::string filename)
 	outfile << "hp: " << c->getHp() << endl;
 	outfile << "max hp: " << c->getMaxHp() << endl;
 
+	// Save equipment
 	temp = c->getHelmet();
 	if (temp != NULL)
 		outfile << "helmet: " << c->getHelmet()->getName() << endl;
@@ -74,8 +77,19 @@ void CharacterDriver::save(Character* c, std::string filename)
 	else
 		outfile << "weapon: -" << endl;
 
+	// Save inventory
+	std::vector<Item*>* inv = c->getInventory();
+	outfile << "inventory: " << endl;
+	if (inv != NULL) {
+		{
+			for (int i = 0; inv->size(); i++)
+				outfile << "- " << inv->at(i)->getName() << ", " << inv->at(i)->getType() << endl;
+		}
+	}
+
 
 	outfile.close();
+	log->LogGame("Character saved");
 }
 
 //! Load a character from a file
@@ -217,6 +231,50 @@ Character* CharacterDriver::load(std::string filename) {
 			Weapon* weapPtr = &weapon;
 			c->setWeapon(weapPtr);
 		}
+	}
+	//inventory
+	std:getline(infile, line);
+	std::string tempType;
+	while (!infile.eof()) {
+		std::getline(infile, line);
+		temp = line.substr(line.find("-") + 2, line.find(",") - 1);
+		tempType = line.substr(line.find(",") + 1, line.length());
+		if (tempType == "helmet") {
+			Helmet helmet = static_cast<Helmet&>(icd.loadItem(temp + ".txt"));
+			Helmet* helPtr = &helmet;
+			c->addToInventory(helPtr);
+		}
+		else if (tempType == "armor") {
+			Armor armor = static_cast<Armor&>(icd.loadItem(temp + ".txt"));
+			Armor* armPtr = &armor;
+			c->addToInventory(armPtr);
+		}
+		else if (tempType == "belt") {
+			Belt belt = static_cast<Belt&>(icd.loadItem(temp + ".txt"));
+			Belt* beltPtr = &belt;
+			c->addToInventory(beltPtr);
+		}
+		else if (tempType == "ring") {
+			Ring ring = static_cast<Ring&>(icd.loadItem(temp + ".txt"));
+			Ring* ringPtr = &ring;
+			c->addToInventory(ringPtr);
+		}
+		else if (tempType == "boots") {
+			Boots boots = static_cast<Boots&>(icd.loadItem(temp + ".txt"));
+			Boots* bootsPtr = &boots;
+			c->addToInventory(bootsPtr);
+		}
+		else if (tempType == "shield") {
+			Shield shield = static_cast<Shield&>(icd.loadItem(temp + ".txt"));
+			Shield* shieldPtr = &shield;
+			c->addToInventory(shieldPtr);
+		}
+		else {
+			Weapon weapon = static_cast<Weapon&>(icd.loadItem(temp + ".txt"));
+			Weapon* weapPtr = &weapon;
+			c->addToInventory(weapPtr);
+		}
+
 	}
 
 	infile.close();
@@ -388,11 +446,13 @@ Character* CharacterDriver::showLoadMenu()
 	if (c == NULL)
 	{
 		cout << "\nNo character of that name exists\n" << endl;
+		log->LogGame("Character of that name does not exist");
 		return NULL;
 	}
 	else
 	{
 		cout << "\n*Character loaded successfully*\n" << endl;
+		log->LogGame("Character loaded");
 		printCharacterBasic(c);
 		return c;
 	}

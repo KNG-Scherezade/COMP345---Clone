@@ -1,7 +1,8 @@
 #pragma once
-#include<iostream>
+#include "Character.h"
+#include "Fighter.h"
+#include "Logger.h"
 
-class Character;
 class CharacterDriver
 {
 public:
@@ -16,4 +17,6 @@ public:
 	void printCharacterBasic(Character* c);
 	void selectItemToEquip(Character* c);
 	void selectItemToUnequip(Character* c);
+private:
+	Logger* log;
 };

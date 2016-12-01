@@ -11,15 +11,15 @@
 
 #include "Map.h"
 #include "ItemContainer.h"
-#include "AbstractStrategy.h"
-#include "GenericMapItem.h"
+
+#include "Logger.h"
+
 
 class Map;
 class ItemContainer;
 class Monster;
-class AbstractStrategy;
 
-class Character : public GenericMapItem
+class Character
 {
 public:
 	Character();
@@ -27,12 +27,10 @@ public:
 	//used for character creation
 	Character(int levelVal);
 	void postInitialize(Map* map);
-	Character(Map* map);
-	Character(int levelVal, Map* map, AbstractStrategy* as);
-	~Character();
 
-	int executeStrategy();
-	void setStrategy(AbstractStrategy* as);
+	Character(Map* map);
+	Character(int levelVal, Map* map);
+	~Character();
 
 	void addToInventory(Item* item);
 	virtual std::string getType() { return ""; }
@@ -40,10 +38,8 @@ public:
 	std::string toString();
 
 	void configurePosition();
-	bool checkMonsters(std::string moveDir);
-	void checkMove(std::string moveDir);
-	int checkLook(std::string lookDir);
-	int checkAttack(std::string atkDir);
+	void checkMove(char moveDir);
+	int checkLook(char lookDir);
 	int StandingOn(int col, int row);
 	void checkInteraction(int row, int col, int type);
 	bool getMoveable();
@@ -62,11 +58,8 @@ public:
 	void hit(int damage);
 	void printInventory();
 	void printEquipped();
-	void printStats();
 	void equip(int slot);
 	void unequip(int slot);
-
-	Map* getMap() { return mapPtr; }
 
 	//virtual std::string getType() { return ""; }
 
@@ -226,7 +219,7 @@ public:
 	//! @param inv	Vector of items in inventory
 	void setInventory(vector<Item*> inv) { inventory = inv; }
 
-	//! Get the inventory of tha character
+	//! Get the inventory of the character
 	//! @return Vector of inventory items
 	vector<Item*>* getInventory() { return &inventory; }
 
@@ -291,7 +284,6 @@ public:
 
 private:
 	Map* mapPtr;
-	AbstractStrategy* as;
 	bool moveable;
 
 	std::string name;
@@ -322,4 +314,6 @@ private:
 	Belt* belt;
 	Boots* boots;
 	Weapon* weapon;
+
+	Logger* log;
 };
