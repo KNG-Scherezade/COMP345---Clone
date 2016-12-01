@@ -23,7 +23,7 @@ int AggressorStrategy::decideAction(GenericMapItem* chara){
 		new Node(MAP->calculateNodeId(MONSTER->position[1], MONSTER->position[0]), MONSTER->position[1], MONSTER->position[0]), //Monster local
 		new Node(MAP->calculateNodeId(PLAYER[0], PLAYER[1]), PLAYER[0], PLAYER[1])); //Player local
 
-	if (((Monster*)chara)->pathToCharacter.size() == 1)
+	if (((Monster*)chara)->pathToCharacter.size() < 1)
 		attack(chara);
 	else
 		move(chara);
@@ -39,7 +39,7 @@ int AggressorStrategy::interact(GenericMapItem* chara){
 	return 0;
 }
 void AggressorStrategy::move(GenericMapItem* chara){
-	((Monster*)chara)->position[0] = ((Monster*)chara)->pathToCharacter.at(1).at(0); //0 x 
-	((Monster*)chara)->position[1] = ((Monster*)chara)->pathToCharacter.at(1).at(1);// 1 y
+	((Monster*)chara)->position[0] = ((Monster*)chara)->pathToCharacter.at(0).at(0); //0 x 
+	((Monster*)chara)->position[1] = ((Monster*)chara)->pathToCharacter.at(0).at(1);// 1 y
 	MONSTER->pathToCharacter.clear();
 }

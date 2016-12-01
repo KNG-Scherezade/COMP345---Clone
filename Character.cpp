@@ -283,7 +283,7 @@ void Character::printInventory()
 	if (inventory.size() != 0) {
 		for each (Item* i in inventory)
 		{
-			cout << "[" << ctr << "] " << i->getName() << endl;
+			cout << "[" << ctr << "] " << i->getType() << endl;
 			ctr++;
 		}
 		cout << "\n";
@@ -296,31 +296,31 @@ void Character::printInventory()
 void Character::printEquipped()
 {
 	if (helmet != NULL)
-		cout << "[0] Helmet: " << helmet->getName() << endl;
+		cout << "[0] Helmet: " << helmet->getType() << endl;
 	else
 		cout << "[0] Helmet: None" << endl;
 	if (armor != NULL)
-		cout << "[1] Armor: " << armor->getName() << endl;
+		cout << "[1] Armor: " << armor->getType() << endl;
 	else
 		cout << "[1] Armor: None" << endl;
 	if (ring != NULL)
-		cout << "[2] Ring: " << ring->getName() << endl;
+		cout << "[2] Ring: " << ring->getType() << endl;
 	else
 		cout << "[2] Ring: None" << endl;
 	if (belt != NULL)
-		cout << "[3] Belt: " << belt->getName() << endl;
+		cout << "[3] Belt: " << belt->getType() << endl;
 	else
 		cout << "[3] Belt: None" << endl;
 	if (boots != NULL)
-		cout << "[4] Boots: " << boots->getName() << endl;
+		cout << "[4] Boots: " << boots->getType() << endl;
 	else
 		cout << "[4] Boots: None" << endl;
 	if (shield != NULL)
-		cout << "[5] Shield: " << shield->getName() << endl;
+		cout << "[5] Shield: " << shield->getType() << endl;
 	else
 		cout << "[5] Shield: None" << endl;
 	if (weapon != NULL)
-		cout << "[6] Weapon: " << weapon->getName() << endl;
+		cout << "[6] Weapon: " << weapon->getType() << endl;
 	else
 		cout << "[6] Weapon: None" << endl;
 

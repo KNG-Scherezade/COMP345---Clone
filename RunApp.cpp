@@ -56,6 +56,8 @@
 #include "Character.h"
 #include "Fighter.h"
 
+#include "GameDriver.h"
+
 
 using namespace std;
 //adding comment just so i could push
@@ -1154,43 +1156,9 @@ int playDriver() {
 
 
 	// ********************************************************* START OF GAME LOOP AND GAME PLAY *********************************************************
-	chara->configurePosition();
-	chara->setStrategy(new HumanPlayerStrategy());
 
-	map->notify();
-	for each(ItemContainer* ic in map->getChests()) {
-		ChestObserver* co = new ChestObserver(ic);
-	}
-	for each(Monster* mon in map->getMonsters()) {
-		mon->levelUpStats(chara->getLevel());
-		MonsterObserver* mo = new MonsterObserver(mon);
-		mon->setStrategy(new FriendlyStrategy());
-	}
-	bool gameRunning = true;
-	while (gameRunning) {
+	GameDriver gd(chara, map);
 
-		int state = chara->executeStrategy();
-		if (state == 1) {
-			gameRunning = false;
-			break;
-		}
-		for each(Monster* mon in map->getMonsters()) {
-			if (mon->dead) {
-				ItemContainer* newIC = new ItemContainer(map, mon->getPosition()[0], mon->getPosition()[1]);
-				ChestObserver* newCO = new ChestObserver(newIC);
-				map->addChest(newIC);
-				map->removeMonster(mon);
-			}
-			else {
-				mon->executeStrategy();
-			}
-		}
-		map->notify();
-	}
-
-
-	std::cout << "GAME OVER\n";
-	getchar();	getchar();
 
 	// ********************************************************* *********************************************************
 
