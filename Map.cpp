@@ -128,6 +128,10 @@ void Map::printMap()
 	cout << "\n";
 }
 
+void Map::addChest(ItemContainer* ic) {
+	chests.push_back(ic);
+}
+
 void Map::setMapName(string newName)
 {
 	mapName = newName;
@@ -146,6 +150,10 @@ int Map::getColumns()
 string Map::getMapName()
 {
 	return mapName;
+}
+
+vector<vector<std::string>>* Map::getMapReference() {
+	return &map;
 }
 /*
 char Map::getCharObject(int row, int column)
@@ -368,13 +376,13 @@ int Map::checkStandingSpace(int col, int row) {
 	if (col < 0 || col >= columns || row < 0 || row >= rows) return '?';
 
 	int spaceState;
-	if (map[row][col] == "m") spaceState = -3;
+	if (getMonstersAtPosition(col,row)->getType() == "monster") spaceState = -3;
 	else if (map[row][col] == "O") spaceState = -2;
 	else if (map[row][col] == "s") spaceState = -1;
-	else if (map[row][col] == " ") spaceState = 0;
 	else if (map[row][col] == "e") spaceState = 1;
-	else if (map[row][col] == "&"|| map[row][col] == "t") spaceState = 2;
+	else if (getChestAtPosition(col, row)->type == "chest")spaceState = 2;
 	else if (map[row][col] == "^") spaceState = 3;
+	else if (map[row][col] == " ") spaceState = 0;
 	else if (map[row][col] == "O") spaceState = '?';
 	else spaceState = '?';
 
@@ -466,9 +474,8 @@ ItemContainer* Map::getChestAtPosition(int x, int y) {
 			return chests.at(i);
 		}
 	}
-
-	std::cout << "COULD NOT FIND CHEST AT " << x << " " << y << "\n";
-	return new ItemContainer(this, 0, 0);
+	//std::cout << "COULD NOT FIND CHEST AT " << x << " " << y << "\n";
+	return new ItemContainer();
 }
 
 Monster* Map::getMonstersAtPosition(int x, int y) {
@@ -477,8 +484,20 @@ Monster* Map::getMonstersAtPosition(int x, int y) {
 			return monsters.at(i);
 		}
 	}
-	std::cout << "COULD NOT FIND MONSTER AT " << x << " " << y << "\n";
+	//std::cout << "COULD NOT FIND MONSTER AT " << x << " " << y << "\n";
 	return new Monster();
+}
+
+void Map::removeMonster(Monster* mon) {
+	int count = 0;
+	for each(Monster* monster in monsters) {
+		if (monster == mon) {
+			monsters.erase(monsters.begin() + count);
+			delete mon;
+			break;
+		}
+		count++;
+	}
 }
 
 std::vector<ItemContainer*> Map::getChests() {

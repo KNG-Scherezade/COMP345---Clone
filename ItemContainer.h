@@ -29,6 +29,8 @@ public:
 
 	void notify();
 	void attach(Observer* obs);
+
+	std::string type;
 	
 private:
 	vector<Item*> itemList;

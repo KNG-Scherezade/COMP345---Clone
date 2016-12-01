@@ -121,6 +121,8 @@ public:
 	void setCharacter(Character *chara);
 
 	vector<vector<std::string>> getMap();
+	vector<vector<std::string>>* getMapReference();
+
 	Character* getCharacter();
 	int* getCharacterPosition();
 	int getCharacterLevel();
@@ -128,10 +130,11 @@ public:
 
 	std::vector<Monster*> getMonsters() { return monsters; }
 
+	void addChest(ItemContainer* ic);
 	std::vector<ItemContainer*> getChests();
 	ItemContainer* getChestAtPosition(int x, int y);
 	Monster* getMonstersAtPosition(int x, int y);
-
+	void removeMonster(Monster* mon);
 	//Subject inheritence / observer methods
 	void attach(Observer* obs);
 	void notify();
@@ -139,7 +142,29 @@ public:
 	//! Allocates memory for the map and sets the cell to empty values.
 	//! Empty cells are represented by an empty space character (' ').
 	void initializeMap();
+	bool characterInitialized = false;
 
+
+	//! Calculates the id for a Node. The id of a Node is it's linear position in the map.
+	//! In other words, it's the x-th cell the map.
+	//!
+	//! @param		row		The row the Node is located on.
+	//!	@param		column	The column the Node is located on.
+	//!
+	//!	@return		The node's id.
+	int calculateNodeId(int row, int column);
+
+	//! Calculates the heuristic for a Node. The heuristic is the number of cells 
+	//! the Node is away from the end cell.
+	//!
+	//! @param		row			The row the Node is located on.
+	//!	@param		column		The column the Node is located on.
+	//!	@param		endRow		The row the end cell is located on.
+	//!	@param		endColumn	The column the end cell is located on.
+	//!
+	//!	@return		The Node's heuristic value. The heuristic is the number of cells 
+	//!				the Node is away from the end cell.
+	int calculateHeuristic(int row, int column, int endRow, int endColumn);
 private:
 
 	int characterPosition[2];
@@ -177,25 +202,6 @@ private:
 	//! @return	bool value indicating whether or not a valid path exists between the start and end cells.
 	bool findValidPath(Node* startPointer, Node* endPointer);
 
-	//! Calculates the id for a Node. The id of a Node is it's linear position in the map.
-	//! In other words, it's the x-th cell the map.
-	//!
-	//! @param		row		The row the Node is located on.
-	//!	@param		column	The column the Node is located on.
-	//!
-	//!	@return		The node's id.
-	int calculateNodeId(int row, int column);
 
-	//! Calculates the heuristic for a Node. The heuristic is the number of cells 
-	//! the Node is away from the end cell.
-	//!
-	//! @param		row			The row the Node is located on.
-	//!	@param		column		The column the Node is located on.
-	//!	@param		endRow		The row the end cell is located on.
-	//!	@param		endColumn	The column the end cell is located on.
-	//!
-	//!	@return		The Node's heuristic value. The heuristic is the number of cells 
-	//!				the Node is away from the end cell.
-	int calculateHeuristic(int row, int column, int endRow, int endColumn);
 };
 

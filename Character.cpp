@@ -20,6 +20,7 @@
 
 //#include "stdafx.h"
 #include "Character.h"
+#include "AbstractStrategy.h"
 #include "ItemGenerator.h"
 
 #include <random>
@@ -68,6 +69,8 @@ void Character::postInitialize(Map* map) {
 	moveable = (true);
 	mapPtr->setCharacter(this);
 
+	mapPtr->characterInitialized = true;
+
 	for each(ItemContainer* ic in mapPtr->getChests()) {
 		ItemGenerator ig;
 		ic->addItem(ig.generateItemPtr(level));
@@ -80,8 +83,10 @@ void Character::postInitialize(Map* map) {
 //! Constructor that takes a level to initialize the stats accordingly
 //!Takes map pointer
 //! @param levelVal	Level of character
-Character::Character(int levelVal, Map* map) {
+Character::Character(int levelVal, Map* map, AbstractStrategy* as) {
 	create();
+
+	this->as = as;
 
 	//Print statements used for testing
 	std::cout << "str: " << str << std::endl;
@@ -113,6 +118,7 @@ void Character::configurePosition() {
 				if (mapPtr->getMap()[i][j] == "s") {
 					int rtn[] = { i , j };
 					SET_POSITION;
+					break;
 				}
 	}
 }
@@ -321,6 +327,17 @@ void Character::printEquipped()
 	cout << "\n";
 }
 
+void Character::printStats() {
+	std::cout << "LVL " << getLevel() <<
+		"\nHealth " << getHp() << "/" << getMaxHp() <<
+		"\nCha " << getCha() <<
+		"\nCon " << getCon() <<
+		"\nDex " << getDex() <<
+		"\nInt " << getIntel() <<
+		"\nStr " << getStr() <<
+		"\nWis " << getWis() << "\n";
+}
+
 void Character::equip(int pos)
 {
 	Item* item = inventory[pos];
@@ -490,16 +507,55 @@ void Character::addToInventory(Item* item) {
 //////////////////////MOVEMENT
 
 
-
+bool Character::checkMonsters(std::string moveDir) {
+	for each(Monster* mon in mapPtr->getMonsters()) {
+		if (moveDir == "l" || moveDir == "L") {
+			if (CHARA_POSITION_X - 1 == mon->position[0], CHARA_POSITION_Y == mon->position[1]) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else if (moveDir == "r" || moveDir == "R") {
+			if (CHARA_POSITION_X == mon->position[0], CHARA_POSITION_Y == mon->position[1]) {
+				moveable = (false);
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else if (moveDir == "u" || moveDir == "U") {
+			if (CHARA_POSITION_X == mon->position[0], CHARA_POSITION_Y - 1 == mon->position[1]) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else if (moveDir == "d" || moveDir == "D") {
+			if (CHARA_POSITION_X == mon->position[0], CHARA_POSITION_Y + 1 == mon->position[1]) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else {
+			moveable = false;
+		}
+	}
+}
 
 //!Checks if the character can make a valid move on the map
-void Character::checkMove(char moveDir) {
+void Character::checkMove(std::string moveDir) {
 	moveable = (true); //negative conditions set false
 	int rtn[2];
 	rtn[1] = CHARA_POSITION_X;
 	rtn[0] = CHARA_POSITION_Y;
-	if (moveDir == 'l' || moveDir == 'L') {
-		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X - 1, CHARA_POSITION_Y)) {
+	if (moveDir == "l" || moveDir == "L") {
+		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X - 1, CHARA_POSITION_Y) && checkMonsters(moveDir)) {
 			moveable = (false);
 		}
 		else {
@@ -507,8 +563,8 @@ void Character::checkMove(char moveDir) {
 			rtn[0] = CHARA_POSITION_Y;
 		}
 	}
-	else if (moveDir == 'r' || moveDir == 'R') {
-		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X + 1, CHARA_POSITION_Y)) {
+	else if (moveDir == "r" || moveDir == "R") {
+		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X + 1, CHARA_POSITION_Y) && checkMonsters(moveDir)) {
 			moveable = (false);
 		}
 		else {
@@ -516,8 +572,8 @@ void Character::checkMove(char moveDir) {
 			rtn[0] = CHARA_POSITION_Y;
 		}
 	}
-	else if (moveDir == 'u' || moveDir == 'U') {
-		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X, CHARA_POSITION_Y - 1)) {
+	else if (moveDir == "u" || moveDir == "U") {
+		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X, CHARA_POSITION_Y - 1) && checkMonsters(moveDir)) {
 			moveable = (false);
 		}
 		else {
@@ -525,8 +581,8 @@ void Character::checkMove(char moveDir) {
 			rtn[0] = CHARA_POSITION_Y - 1;
 		}
 	}
-	else if (moveDir == 'd' || moveDir == 'D') {
-		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X, CHARA_POSITION_Y + 1)) {
+	else if (moveDir == "d" || moveDir == "D") {
+		if (mapPtr->isFunctionallyOccupied(CHARA_POSITION_X, CHARA_POSITION_Y + 1) && checkMonsters(moveDir)) {
 			moveable = (false);
 		}
 		else {
@@ -546,47 +602,100 @@ void Character::checkMove(char moveDir) {
 
 
 //!Checks what the character is looking at and returns an ID from map function checkStandingSpace(col, row)
-int Character::checkLook(char lookDir) {
+int Character::checkAttack(std::string lookDir) {
 	int spaceID = '?';
 	std::string finalLookDir;
-	if (lookDir == 'l' || lookDir == 'L') {
+	if (lookDir == "l" || lookDir == "L") {
 		finalLookDir = "l";
 		spaceID = CHECK_SPACE_L;
 	}
-	else if (lookDir == 'r' || lookDir == 'R') {
+	else if (lookDir == "r" || lookDir == "R") {
 		finalLookDir = "r";
 		spaceID = CHECK_SPACE_R;
 	}
-	else if (lookDir == 'u' || lookDir == 'U') {
+	else if (lookDir == "u" || lookDir == "U") {
 		std::cout << "Enter l for diagonal left, r for diagonal right and u for straight up\n";
 		std::cin >> lookDir;
-		if (lookDir == 'l' || lookDir == 'L') {
+		if (lookDir == "l" || lookDir == "L") {
 			finalLookDir = "ul";
 			spaceID = CHECK_SPACE_UL;
 		}
-		else if (lookDir == 'r' || lookDir == 'R') {
+		else if (lookDir == "r" || lookDir == "R") {
 			finalLookDir = "ur";
 			spaceID = CHECK_SPACE_UR;
 		}
-		else if (lookDir == 'u' || lookDir == 'U') {
+		else if (lookDir == "u" || lookDir == "U") {
 			finalLookDir = "u";
 			spaceID = CHECK_SPACE_U;
 		}
 		else
 			spaceID = '?';
 	}
-	else if (lookDir == 'd' || lookDir == 'D') {
+	else if (lookDir == "d" || lookDir == "D") {
 		std::cout << "Enter l for diagonal left, r for diagonal right and d for straight down\n";
 		std::cin >> lookDir;
-		if (lookDir == 'l' || lookDir == 'L') {
+		if (lookDir == "l" || lookDir == "L") {
 			finalLookDir = "dl";
 			spaceID = CHECK_SPACE_DL;
 		}
-		else if (lookDir == 'r' || lookDir == 'R') {
+		else if (lookDir == "r" || lookDir == "R") {
 			finalLookDir = "dr";
 			spaceID = CHECK_SPACE_DR;
 		}
-		else if (lookDir == 'd' || lookDir == 'D') {
+		else if (lookDir == "d" || lookDir == "D") {
+			finalLookDir = "d";
+			spaceID = CHECK_SPACE_D;
+		}
+		else {
+			spaceID = '?';
+		}
+	}
+	return spaceID;
+}
+
+
+//!Checks what the character is looking at and returns an ID from map function checkStandingSpace(col, row)
+int Character::checkLook(std::string lookDir) {
+	int spaceID = '?';
+	std::string finalLookDir;
+	if (lookDir == "l" || lookDir == "L") {
+		finalLookDir = "l";
+		spaceID = CHECK_SPACE_L;
+	}
+	else if (lookDir == "r" || lookDir == "R") {
+		finalLookDir = "r";
+		spaceID = CHECK_SPACE_R;
+	}
+	else if (lookDir == "u" || lookDir == "U") {
+		std::cout << "Enter l for diagonal left, r for diagonal right and u for straight up\n";
+		std::cin >> lookDir;
+		if (lookDir == "l" || lookDir == "L") {
+			finalLookDir = "ul";
+			spaceID = CHECK_SPACE_UL;
+		}
+		else if (lookDir == "r" || lookDir == "R") {
+			finalLookDir = "ur";
+			spaceID = CHECK_SPACE_UR;
+		}
+		else if (lookDir == "u" || lookDir == "U") {
+			finalLookDir = "u";
+			spaceID = CHECK_SPACE_U;
+		}
+		else
+			spaceID = '?';
+	}
+	else if (lookDir == "d" || lookDir == "D") {
+		std::cout << "Enter l for diagonal left, r for diagonal right and d for straight down\n";
+		std::cin >> lookDir;
+		if (lookDir == "l" || lookDir == "L") {
+			finalLookDir = "dl";
+			spaceID = CHECK_SPACE_DL;
+		}
+		else if (lookDir == "r" || lookDir == "R") {
+			finalLookDir = "dr";
+			spaceID = CHECK_SPACE_DR;
+		}
+		else if (lookDir == "d" || lookDir == "D") {
 			finalLookDir = "d";
 			spaceID = CHECK_SPACE_D;
 		}
@@ -606,6 +715,7 @@ int Character::checkLook(char lookDir) {
 
 	return spaceID;
 }
+
 
 //!Based off of what happens in checklook, this function alters the state of the map, displays a message or does other actions.
 //!Eg. the character makes acts on a chest so it should get the map to make a change.(Only map related features)
@@ -639,6 +749,7 @@ void Character::checkInteraction(int row, int col, int type) {
 	}
 }
 
+
 std::string Character::toString() {
 	return ("Name: " + name + "\nLevel: " + std::to_string(level) + "\nstr:" + std::to_string(str) + "\ndex:" + std::to_string(dex) + "\ncon" + std::to_string(con)
 		+ "\nInt" + std::to_string(intel) + "\nwis" + std::to_string(wis) + "\ncha:" + std::to_string(cha) + "\nHP: " + std::to_string(hp) + "\nmax HP: " + std::to_string(maxHp) + "\n");
@@ -658,3 +769,10 @@ void Character::setMoveable(bool move) {
 	moveable = move;
 }
 
+int Character::executeStrategy() {
+	return as->decideAction(this);
+}
+
+void Character::setStrategy(AbstractStrategy* strat) {
+	as = strat;
+}

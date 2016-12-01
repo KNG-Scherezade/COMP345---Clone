@@ -11,7 +11,7 @@ Fighter::Fighter() : Character() {
 
 //! Constructor accepting a character starting level
 //! @param level	Level character will start at, pointer to the map it's stationed on
-Fighter::Fighter(int levelVal, Map* map) : Character(levelVal, map) {
+Fighter::Fighter(int levelVal, Map* map, AbstractStrategy* as) : Character(levelVal, map, as) {
 	//May add unique logic further in project
 }
 //! Constructor accepting a character starting level

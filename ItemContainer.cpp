@@ -4,11 +4,13 @@ using namespace std;
 ItemContainer::ItemContainer()
 {
 	itemList = vector<Item*>();
+	type = "not a chest";
 }
 
 ItemContainer::ItemContainer(vector<Item*> items)
 {
 	itemList = items;
+	type = "chest";
 }
 
 ItemContainer::ItemContainer(Map* map, int x, int y)
@@ -18,6 +20,7 @@ ItemContainer::ItemContainer(Map* map, int x, int y)
 	this->map = map;
 	position[0] = x;
 	position[1] = y;
+	type = "chest";
 }
 
 ItemContainer::ItemContainer(vector<Item*> items, Map* map, int x, int y)
@@ -27,6 +30,7 @@ ItemContainer::ItemContainer(vector<Item*> items, Map* map, int x, int y)
 	this->map = map;
 	position[0] = x;
 	position[1] = y;
+	type = "chest";
 }
 
 

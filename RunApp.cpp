@@ -21,6 +21,7 @@
 //!	  4. Go to 'Project > Properties > Build Events > Post-Build Event'. Put '"$(TargetPath)"' in the 'Command Line' textbox.Put 'Unit Tests...' in the 'Description' textbox.
 
 
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -33,8 +34,7 @@
 #include "MapSaveBuilder.h"
 #include "ItemCreationDriver.h"
 #include "CharacterDriver.h"
-#include "Character.h"
-#include "Fighter.h"
+
 #include "MonsterObserver.h"
 
 #include "MapListings.h"
@@ -47,6 +47,15 @@
 #include "ItemGenerator.h"
 
 #include <iostream>
+
+#include "AbstractStrategy.h"
+#include "HumanPlayerStrategy.h"
+#include "FriendlyStrategy.h"
+#include "AggressorStrategy.h"
+
+#include "Character.h"
+#include "Fighter.h"
+
 
 using namespace std;
 //adding comment just so i could push
@@ -1145,75 +1154,38 @@ int playDriver() {
 
 
 	// ********************************************************* START OF GAME LOOP AND GAME PLAY *********************************************************
+	chara->configurePosition();
+	chara->setStrategy(new HumanPlayerStrategy());
 
 	map->notify();
 	for each(ItemContainer* ic in map->getChests()) {
 		ChestObserver* co = new ChestObserver(ic);
 	}
 	for each(Monster* mon in map->getMonsters()) {
+		mon->levelUpStats(chara->getLevel());
 		MonsterObserver* mo = new MonsterObserver(mon);
+		mon->setStrategy(new FriendlyStrategy());
 	}
 	bool gameRunning = true;
 	while (gameRunning) {
 
-
-
-		char direction;
-		std::cout << "Enter A Direction To Move of \"l, r, u or d\". Enter \"i\" for inventory or enter \"e\" to interact:\n";
-		std::cin >> direction;
-
-
-		//INTERACT WITH INVENTORY
-		if (direction == 'i' || direction == 'I') {
-			bool lookingAtThings = true;
-			while (lookingAtThings) {
-				std::cout << "\t\nYOUR INVENTORY IS AS FOLLOWS: \n" << std::endl;
-				chara->printInventory();
-				std::cout << "\t\nYOUR EQUIPS ARE AS FOLLOWS: \n" << std::endl;
-				chara->printEquipped();
-				std::cout << "\n\tEnter any key to continue\n" << std::endl;
-				char stopVar;//since getchar was failing
-				std::cin >> stopVar;
-				lookingAtThings = false;
-			}
-
+		int state = chara->executeStrategy();
+		if (state == 1) {
+			gameRunning = false;
+			break;
 		}
-
-		//INTERACT WITH EXIT POINT
-		else if (direction == 'e' || direction == 'E') {
-			if (map->getCurrentSquare() == 1) {
-				chara->setLevel(chara->getLevel() + 1);
-				CharacterDriver cd;
-				cd.save(chara, chara->getName());
-
-				std::cout << "\n\nYou Move to an new Room AND GAIN A LEVEL\n";
-				gameRunning = false;
-				break;
+		for each(Monster* mon in map->getMonsters()) {
+			if (mon->dead) {
+				ItemContainer* newIC = new ItemContainer(map, mon->getPosition()[0], mon->getPosition()[1]);
+				ChestObserver* newCO = new ChestObserver(newIC);
+				map->addChest(newIC);
+				map->removeMonster(mon);
 			}
-
-			// CHECKS FOR LOOK DIRECTIONS
-			// CHARACTER CREATES SIMPLE COUT LINES. THIS FILE DOES COMPLEX ONES
-			std::cout << "Enter A Direction To Interact of \"l, r, u or d\". U and D allow diagonals:\n";
-			std::cin >> direction;
-			int msg = chara->checkLook(direction);
-
-
-
-			//CHEST INTERACTION
-			if (msg == 2) {
-				chara->lastOpenedChest->notify();
+			else {
+				mon->executeStrategy();
 			}
-
-			//MONSTER INTERACTION
-			else if (msg == -3) {
-				chara->lastInteractedMonster->notify();
-			}
-			map->notify();
 		}
-		//MOVEMENT CHECKS
-		else {
-			chara->checkMove(direction);
-		}
+		map->notify();
 	}
 
 

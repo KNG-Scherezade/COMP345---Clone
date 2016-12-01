@@ -1,7 +1,7 @@
 #pragma once
-#include "Character.h"
-#include "Fighter.h"
+#include<iostream>
 
+class Character;
 class CharacterDriver
 {
 public:

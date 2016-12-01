@@ -9,5 +9,6 @@ public:
 
 	void update();
 	void printMonsterDetails();
+	bool checkStatus();
 };
 

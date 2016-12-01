@@ -11,13 +11,15 @@
 
 #include "Map.h"
 #include "ItemContainer.h"
-
+#include "AbstractStrategy.h"
+#include "GenericMapItem.h"
 
 class Map;
 class ItemContainer;
 class Monster;
+class AbstractStrategy;
 
-class Character
+class Character : public GenericMapItem
 {
 public:
 	Character();
@@ -25,10 +27,12 @@ public:
 	//used for character creation
 	Character(int levelVal);
 	void postInitialize(Map* map);
-
 	Character(Map* map);
-	Character(int levelVal, Map* map);
+	Character(int levelVal, Map* map, AbstractStrategy* as);
 	~Character();
+
+	int executeStrategy();
+	void setStrategy(AbstractStrategy* as);
 
 	void addToInventory(Item* item);
 	virtual std::string getType() { return ""; }
@@ -36,8 +40,10 @@ public:
 	std::string toString();
 
 	void configurePosition();
-	void checkMove(char moveDir);
-	int checkLook(char lookDir);
+	bool checkMonsters(std::string moveDir);
+	void checkMove(std::string moveDir);
+	int checkLook(std::string lookDir);
+	int checkAttack(std::string atkDir);
 	int StandingOn(int col, int row);
 	void checkInteraction(int row, int col, int type);
 	bool getMoveable();
@@ -56,8 +62,11 @@ public:
 	void hit(int damage);
 	void printInventory();
 	void printEquipped();
+	void printStats();
 	void equip(int slot);
 	void unequip(int slot);
+
+	Map* getMap() { return mapPtr; }
 
 	//virtual std::string getType() { return ""; }
 
@@ -282,6 +291,7 @@ public:
 
 private:
 	Map* mapPtr;
+	AbstractStrategy* as;
 	bool moveable;
 
 	std::string name;

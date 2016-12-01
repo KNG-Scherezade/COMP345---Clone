@@ -9,7 +9,7 @@ MapObserver::MapObserver(Subject* subj) : Observer(subj)
 
 MapObserver::~MapObserver()
 {
-	
+
 }
 //!see observer and related functions to update
 void MapObserver::update() {
@@ -21,16 +21,22 @@ void MapObserver::update() {
 //! Prints out the map and gets open and closed data from all chests
 std::string MapObserver::printMap()
 {
-	std::string returnString = "";
+	//std::cout << MAP_CAST->getCharacterPosition()[0] << "\nxcf" << MAP_CAST->getCharacterPosition()[1];
 
+	std::string returnString = "";
 	int counter = 0;
 	for (int i = 0; i < MAP_CAST->getRows(); i++) {
 		returnString += "\n[";
 		for (int j = 0; j < MAP_CAST->getColumns(); j++) {
-			if (MAP_CAST->getCharacterPosition()[0] == i && MAP_CAST->getCharacterPosition()[1] == j) {
+			if (MAP_CAST->getCharacterPosition()[0] == i && MAP_CAST->getCharacterPosition()[1] == j
+				&& MAP_CAST->characterInitialized) {
 				returnString += 'C';
 			}
-			else if (MAP_CAST->getMap()[i][j] == "&") {
+			else if (MAP_CAST->getMonstersAtPosition(j, i)->getType() == "monster") {
+				std::cout << j << "x y" << i << std::endl;
+				returnString += 'm';
+			}
+			else if (MAP_CAST->getChestAtPosition(j, i)->type == "chest") {
 				if (CHEST_OPEN) {
 					returnString += '^';
 				}
@@ -39,8 +45,11 @@ std::string MapObserver::printMap()
 				}
 			}
 			else {
+				if (MAP_CAST->getMap()[i][j] == "m" || MAP_CAST->getMap()[i][j] == "C")
+					MAP_CAST->fillCell(i, j, " ");
 				returnString += MAP_CAST->getMap()[i][j];
 			}
+
 		}
 		returnString += "]";
 	}
@@ -66,7 +75,7 @@ std::string MapObserver::printNotifications() {
 	else if (cSquare == 1) {
 		returnString = "YOU ARE OVER AN EXIT\n";
 	}
-	else if(cSquare < -1 || cSquare > 1 && cSquare != '?'){
+	else if (cSquare < -1 || cSquare > 1 && cSquare != '?') {
 		returnString = "YOU ARE STANDING ON SOMETHING YOU SHOULDN'T BE ON\n";
 	}
 	return returnString;
