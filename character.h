@@ -11,6 +11,9 @@
 
 #include "Map.h"
 #include "ItemContainer.h"
+
+#include "Logger.h"
+
 #include "AbstractStrategy.h"
 #include "GenericMapItem.h"
 
@@ -27,6 +30,7 @@ public:
 	//used for character creation
 	Character(int levelVal);
 	void postInitialize(Map* map);
+
 	Character(Map* map);
 	Character(int levelVal, Map* map, AbstractStrategy* as);
 	~Character();
@@ -65,8 +69,6 @@ public:
 	void printStats();
 	void equip(int slot);
 	void unequip(int slot);
-
-	Map* getMap() { return mapPtr; }
 
 	//virtual std::string getType() { return ""; }
 
@@ -226,7 +228,7 @@ public:
 	//! @param inv	Vector of items in inventory
 	void setInventory(vector<Item*> inv) { inventory = inv; }
 
-	//! Get the inventory of tha character
+	//! Get the inventory of the character
 	//! @return Vector of inventory items
 	vector<Item*>* getInventory() { return &inventory; }
 
@@ -322,4 +324,6 @@ private:
 	Belt* belt;
 	Boots* boots;
 	Weapon* weapon;
+
+	Logger* log;
 };
