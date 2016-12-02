@@ -208,6 +208,17 @@ void Character::calculateHp()
 void Character::calculateAc()
 {
 	ac = 10 + dex_mod;
+	
+	if (helmet != NULL)
+		ac += helmet->getArmorClass();
+	if (armor != NULL)
+		ac += armor->getArmorClass();
+	if (belt != NULL)
+		ac += 0;
+	if (boots != NULL)
+		ac += boots->getArmorClass();
+	if (shield != NULL)
+		ac += shield->getArmorClass();
 }
 
 //! Calculates the base attack bonus of the character.
@@ -278,6 +289,7 @@ int Character::getModifier(int stat)
 //! @param damage	Damage to be taken away from hitpoints
 void Character::hit(int damage) {
 	hp -= damage;
+	log->LogCharacter("Hit for " + std::to_string(damage));
 }
 
 
@@ -333,6 +345,7 @@ void Character::printEquipped()
 	cout << "\n";
 }
 
+//! Prints the stats of the character
 void Character::printStats() {
 	std::cout << "LVL " << getLevel() <<
 		"\nHealth " << getHp() << "/" << getMaxHp() <<
@@ -344,20 +357,35 @@ void Character::printStats() {
 		"\nWis " << getWis() << "\n";
 }
 
+//! Equip an item from the inventory. Item position in inventory is used to determine item that is intended to be equip
+//! @param pos	Position of item in inventory
 void Character::equip(int pos)
 {
 	Item* item = inventory[pos];
 	std::string type = item->getType();
 
-	if (type == "helmet") {
-		if (helmet == NULL)
-			helmet = static_cast<Helmet*>(item);
-		else {
-			inventory.push_back(helmet);
-			helmet = static_cast<Helmet*>(item);
+	// In cases where nothing is equip it will simply equip the new item
+			// Otherwise it will replace the old equipment in that slot and place it in the inventory
+			// Modifying stats dynamically
+		if (type == "helmet") {
+			if (helmet == NULL) {
+				if (helmet == NULL)
+					helmet = static_cast<Helmet*>(item);
+				
+			}
+			else {
+				inventory.push_back(helmet);
+				wis -= helmet->getWisdom();
+				intel -= helmet->getWisdom();
+				helmet = static_cast<Helmet*>(item);
+			}
+			wis += helmet->getWisdom();
+			intel += helmet->getWisdom();
+			wis_mod = getModifier(wis);
+			intel_mod = getModifier(intel);
+			inventory.erase(inventory.begin() + pos);
+			
 		}
-		inventory.erase(inventory.begin() + pos);
-	}
 	if (type == "armor") {
 		if (armor == NULL)
 			armor = static_cast<Armor*>(item);
@@ -368,21 +396,61 @@ void Character::equip(int pos)
 		inventory.erase(inventory.begin() + pos);
 	}
 	if (type == "ring") {
+		int tempHp = 0;
 		if (ring == NULL)
 			ring = static_cast<Ring*>(item);
 		else {
 			inventory.push_back(ring);
+			cha -= ring->getCharisma();
+			con -= ring->getConstitution();
+			str -= ring->getStrength();
+			wis -= ring->getWisdom();
+			if (hp != maxHp) {
+				tempHp = hp;
+			
+			}
 			ring = static_cast<Ring*>(item);
 		}
+		cha += ring->getCharisma();
+		con += ring->getConstitution();
+		str += ring->getStrength();
+		wis += ring->getWisdom();
+		cha_mod = getModifier(cha);
+		con_mod = getModifier(con);
+		str_mod = getModifier(str);
+		wis_mod = getModifier(wis);
+		calculateHp();
+		if (tempHp != 0)
+			if (tempHp < maxHp)
+			hp = tempHp;
+		calculateDamageBonus();
+		calculateBaseAttackBonus();
 		inventory.erase(inventory.begin() + pos);
 	}
 	if (type == "belt") {
+		int tempHp = 0;
 		if (belt == NULL)
 			belt = static_cast<Belt*>(item);
 		else {
 			inventory.push_back(belt);
+			con -= belt->getConstitution();
+			str -= belt->getStrength();
+			if (hp != maxHp) {
+				tempHp = hp;
+				
+			}
 			belt = static_cast<Belt*>(item);
 		}
+		con += belt->getConstitution();
+		str += belt->getStrength();
+		con_mod = getModifier(con);
+		str_mod = getModifier(str);
+		calculateHp();
+		if (tempHp != 0)
+			if (tempHp < maxHp)
+			hp = tempHp;
+		calculateDamageBonus();
+		calculateBaseAttackBonus();
 		inventory.erase(inventory.begin() + pos);
 	}
 	if (type == "boots") {
@@ -390,8 +458,11 @@ void Character::equip(int pos)
 			boots = static_cast<Boots*>(item);
 		else {
 			inventory.push_back(boots);
+			dex -= boots->getDexterity();
 			boots = static_cast<Boots*>(item);
 		}
+		dex += boots->getDexterity();
+		dex_mod = getModifier(dex);
 		inventory.erase(inventory.begin() + pos);
 	}
 	if (type == "shield") {
@@ -412,9 +483,16 @@ void Character::equip(int pos)
 		}
 		inventory.erase(inventory.begin() + pos);
 	}
+	calculateAc();
+	log->LogCharacter(item->getName() + " equipped");
+	
+ }
 
-}
-
+// In cases where nothing is equip it will simply equip the new item
+// Otherwise it will replace the old equipment in that slot and place it in the inventory
+// Modifying stats dynamically
+//! Unequip an item from the character. Slot represents which equipment slot is targeted for unequip
+//! @param slot	Equipment slot to unequip
 void Character::unequip(int slot)
 {
 	std::string type;
