@@ -223,8 +223,8 @@ void Character::generateRandomStats()
 //! Hitpoints are calculated by adding the constitution modifier to the character level
 void Character::calculateHp()
 {
-	hp = abs(con_mod) * dice.rollD10() + level;
-	maxHp = abs(con_mod) * dice.rollD10() + level;
+	hp = abs(con_mod) + level;
+	maxHp = abs(con_mod)  + level;
 }
 
 //! Calculates the armor class of the character.
