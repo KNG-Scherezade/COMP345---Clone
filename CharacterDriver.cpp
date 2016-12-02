@@ -126,172 +126,172 @@ Character* CharacterDriver::load(std::string filename) {
 
 	try {
 
-	std::getline(infile, line);
-	std::string type = line.substr(line.find(":") + 2, line.length());
+		std::getline(infile, line);
+		std::string type = line.substr(line.find(":") + 2, line.length());
 
-	if (type == "Fighter")
-		c = new Fighter();
+		if (type == "Fighter")
+			c = new Fighter();
 
-	//name
-	std::getline(infile, line);
-	name = line.substr(line.find(":") + 2, line.length());
-	c->setName(name);
-	//level
-	std::getline(infile, line);
-	level = stoi(line.substr(line.find(":") + 2, line.length()));
-	c->setLevel(level);
-	//str
-	std::getline(infile, line);
-	str = stoi(line.substr(line.find(":") + 2, line.length()));
-	c->setStr(str);
-	//dex
-	std::getline(infile, line);
-	dex = stoi(line.substr(line.find(":") + 2, line.length()));
-	c->setDex(dex);
-	//con
-	std::getline(infile, line);
-	con = stoi(line.substr(line.find(":") + 2, line.length()));
-	c->setCon(con);
-	//intel
-	std::getline(infile, line);
-	intel = stoi(line.substr(line.find(":") + 2, line.length()));
-	c->setIntel(intel);
-	//wis
-	std::getline(infile, line);
-	wis = stoi(line.substr(line.find(":") + 2, line.length()));
-	c->setWis(wis);
-	//cha
-	std::getline(infile, line);
-	cha = stoi(line.substr(line.find(":") + 2, line.length()));
-	c->setCha(cha);
-	//hp
-	std::getline(infile, line);
-	hp = stoi(line.substr(line.find(":") + 2, line.length()));
-	c->setHp(hp);
-	//max hp
-	std::getline(infile, line);
-	maxHp = stoi(line.substr(line.find(":") + 2, line.length()));
-	c->setMaxHp(maxHp);
+		//name
+		std::getline(infile, line);
+		name = line.substr(line.find(":") + 2, line.length());
+		c->setName(name);
+		//level
+		std::getline(infile, line);
+		level = stoi(line.substr(line.find(":") + 2, line.length()));
+		c->setLevel(level);
+		//str
+		std::getline(infile, line);
+		str = stoi(line.substr(line.find(":") + 2, line.length()));
+		c->setStr(str);
+		//dex
+		std::getline(infile, line);
+		dex = stoi(line.substr(line.find(":") + 2, line.length()));
+		c->setDex(dex);
+		//con
+		std::getline(infile, line);
+		con = stoi(line.substr(line.find(":") + 2, line.length()));
+		c->setCon(con);
+		//intel
+		std::getline(infile, line);
+		intel = stoi(line.substr(line.find(":") + 2, line.length()));
+		c->setIntel(intel);
+		//wis
+		std::getline(infile, line);
+		wis = stoi(line.substr(line.find(":") + 2, line.length()));
+		c->setWis(wis);
+		//cha
+		std::getline(infile, line);
+		cha = stoi(line.substr(line.find(":") + 2, line.length()));
+		c->setCha(cha);
+		//hp
+		std::getline(infile, line);
+		hp = stoi(line.substr(line.find(":") + 2, line.length()));
+		c->setHp(hp);
+		//max hp
+		std::getline(infile, line);
+		maxHp = stoi(line.substr(line.find(":") + 2, line.length()));
+		c->setMaxHp(maxHp);
 
-	std::getline(infile, line);
-	if (!infile.eof()) {
-		temp = line.substr(line.find(":") + 2, line.length());
-		if (temp != "-") {
-			Helmet helmet = static_cast<Helmet&>(icd.loadItem(temp + ".txt"));
-			Helmet* helmPtr = &helmet;
-			c->setHelmet(helmPtr);
-		}
-		//armor
 		std::getline(infile, line);
-		temp = line.substr(line.find(":") + 2, line.length());
-		if (temp != "-") {
-			Armor armor = static_cast<Armor&>(icd.loadItem(temp + ".txt"));
-			Armor* armPtr = &armor;
-			c->setArmor(armPtr);
+		if (!infile.eof()) {
+			temp = line.substr(line.find(":") + 2, line.length());
+			if (temp != "-") {
+				Helmet helmet = static_cast<Helmet&>(icd.loadItem(temp + ".txt"));
+				Helmet* helmPtr = &helmet;
+				c->setHelmet(helmPtr);
+			}
+			//armor
+			std::getline(infile, line);
+			temp = line.substr(line.find(":") + 2, line.length());
+			if (temp != "-") {
+				Armor armor = static_cast<Armor&>(icd.loadItem(temp + ".txt"));
+				Armor* armPtr = &armor;
+				c->setArmor(armPtr);
+			}
+			//ring
+			std::getline(infile, line);
+			temp = line.substr(line.find(":") + 2, line.length());
+			if (temp != "-") {
+				Ring ring = static_cast<Ring&>(icd.loadItem(temp + ".txt"));
+				Ring* ringPtr = new Ring();
+				ringPtr->setName(ring.getName());
+				c->setRing(ringPtr);
+				//delete ringPtr;
+			}
+			//belt
+			std::getline(infile, line);
+			temp = line.substr(line.find(":") + 2, line.length());
+			if (temp != "-") {
+				Belt belt = static_cast<Belt&>(icd.loadItem(temp + ".txt"));
+				Belt* beltPtr = &belt;
+				c->setBelt(beltPtr);
+			}
+			//boots
+			std::getline(infile, line);
+			temp = line.substr(line.find(":") + 2, line.length());
+			if (temp != "-") {
+				Boots boots = static_cast<Boots&>(icd.loadItem(temp + ".txt"));
+				Boots* bootPtr = &boots;
+				c->setBoots(bootPtr);
+			}
+			//shield
+			std::getline(infile, line);
+			temp = line.substr(line.find(":") + 2, line.length());
+			if (temp != "-") {
+				Shield shield = static_cast<Shield&>(icd.loadItem(temp + ".txt"));
+				Shield* shPtr = &shield;
+				c->setShield(shPtr);
+			}
+			//weapon
+			std::getline(infile, line);
+			temp = line.substr(line.find(":") + 2, line.length());
+			if (temp != "-") {
+				Weapon weapon = static_cast<Weapon&>(icd.loadItem(temp + ".txt"));
+				Weapon* weapPtr = &weapon;
+				c->setWeapon(weapPtr);
+			}
 		}
-		//ring
-		std::getline(infile, line);
-		temp = line.substr(line.find(":") + 2, line.length());
-		if (temp != "-") {
-			Ring ring = static_cast<Ring&>(icd.loadItem(temp + ".txt"));
-			Ring* ringPtr = new Ring();
-			ringPtr->setName(ring.getName());
-			c->setRing(ringPtr);
-			//delete ringPtr;
-		}
-		//belt
-		std::getline(infile, line);
-		temp = line.substr(line.find(":") + 2, line.length());
-		if (temp != "-") {
-			Belt belt = static_cast<Belt&>(icd.loadItem(temp + ".txt"));
-			Belt* beltPtr = &belt;
-			c->setBelt(beltPtr);
-		}
-		//boots
-		std::getline(infile, line);
-		temp = line.substr(line.find(":") + 2, line.length());
-		if (temp != "-") {
-			Boots boots = static_cast<Boots&>(icd.loadItem(temp + ".txt"));
-			Boots* bootPtr = &boots;
-			c->setBoots(bootPtr);
-		}
-		//shield
-		std::getline(infile, line);
-		temp = line.substr(line.find(":") + 2, line.length());
-		if (temp != "-") {
-			Shield shield = static_cast<Shield&>(icd.loadItem(temp + ".txt"));
-			Shield* shPtr = &shield;
-			c->setShield(shPtr);
-		}
-		//weapon
-		std::getline(infile, line);
-		temp = line.substr(line.find(":") + 2, line.length());
-		if (temp != "-") {
-			Weapon weapon = static_cast<Weapon&>(icd.loadItem(temp + ".txt"));
-			Weapon* weapPtr = &weapon;
-			c->setWeapon(weapPtr);
-		}
-	}
-	//inventory
+		//inventory
 	std:getline(infile, line);
-	std::string tempType;
-	while (!infile.eof()) {
-		std::getline(infile, line);
-		temp = line.substr(line.find("-") + 2, line.find(",") - 1);
-		tempType = line.substr(line.find(",") + 1, line.length());
-		if (tempType == "helmet") {
-			Helmet helmet = static_cast<Helmet&>(icd.loadItem(temp + ".txt"));
-			Helmet* helPtr = &helmet;
-			c->addToInventory(helPtr);
-		}
-		else if (tempType == "armor") {
-			Armor armor = static_cast<Armor&>(icd.loadItem(temp + ".txt"));
-			Armor* armPtr = &armor;
-			c->addToInventory(armPtr);
-		}
-		else if (tempType == "belt") {
-			Belt belt = static_cast<Belt&>(icd.loadItem(temp + ".txt"));
-			Belt* beltPtr = &belt;
-			c->addToInventory(beltPtr);
-		}
-		else if (tempType == "ring") {
-			Ring ring = static_cast<Ring&>(icd.loadItem(temp + ".txt"));
-			Ring* ringPtr = &ring;
-			c->addToInventory(ringPtr);
-		}
-		else if (tempType == "boots") {
-			Boots boots = static_cast<Boots&>(icd.loadItem(temp + ".txt"));
-			Boots* bootsPtr = &boots;
-			c->addToInventory(bootsPtr);
-		}
-		else if (tempType == "shield") {
-			Shield shield = static_cast<Shield&>(icd.loadItem(temp + ".txt"));
-			Shield* shieldPtr = &shield;
-			c->addToInventory(shieldPtr);
-		}
-		else {
-			Weapon weapon = static_cast<Weapon&>(icd.loadItem(temp + ".txt"));
-			Weapon* weapPtr = &weapon;
-			c->addToInventory(weapPtr);
+		std::string tempType;
+		while (!infile.eof()) {
+			std::getline(infile, line);
+			temp = line.substr(line.find("-") + 2, line.find(",") - 1);
+			tempType = line.substr(line.find(",") + 1, line.length());
+			if (tempType == "helmet") {
+				Helmet helmet = static_cast<Helmet&>(icd.loadItem(temp + ".txt"));
+				Helmet* helPtr = &helmet;
+				c->addToInventory(helPtr);
+			}
+			else if (tempType == "armor") {
+				Armor armor = static_cast<Armor&>(icd.loadItem(temp + ".txt"));
+				Armor* armPtr = &armor;
+				c->addToInventory(armPtr);
+			}
+			else if (tempType == "belt") {
+				Belt belt = static_cast<Belt&>(icd.loadItem(temp + ".txt"));
+				Belt* beltPtr = &belt;
+				c->addToInventory(beltPtr);
+			}
+			else if (tempType == "ring") {
+				Ring ring = static_cast<Ring&>(icd.loadItem(temp + ".txt"));
+				Ring* ringPtr = &ring;
+				c->addToInventory(ringPtr);
+			}
+			else if (tempType == "boots") {
+				Boots boots = static_cast<Boots&>(icd.loadItem(temp + ".txt"));
+				Boots* bootsPtr = &boots;
+				c->addToInventory(bootsPtr);
+			}
+			else if (tempType == "shield") {
+				Shield shield = static_cast<Shield&>(icd.loadItem(temp + ".txt"));
+				Shield* shieldPtr = &shield;
+				c->addToInventory(shieldPtr);
+			}
+			else {
+				Weapon weapon = static_cast<Weapon&>(icd.loadItem(temp + ".txt"));
+				Weapon* weapPtr = &weapon;
+				c->addToInventory(weapPtr);
+			}
+
 		}
 
-	}
+		infile.close();
 
-	infile.close();
-
-	//Set modifiers
-	c->setStr_mod(c->getModifier(str));
-	c->setDex_mod(c->getModifier(dex));
-	c->setCon_mod(c->getModifier(con));
-	c->setIntel_mod(c->getModifier(intel));
-	c->setWis_mod(c->getModifier(wis));
-	c->setCha_mod(c->getModifier(cha));
-	//ac
-	c->calculateAc();
-	//attack bonus
-	c->calculateBaseAttackBonus();
-	//damage bonus
-	c->calculateDamageBonus();
+		//Set modifiers
+		c->setStr_mod(c->getModifier(str));
+		c->setDex_mod(c->getModifier(dex));
+		c->setCon_mod(c->getModifier(con));
+		c->setIntel_mod(c->getModifier(intel));
+		c->setWis_mod(c->getModifier(wis));
+		c->setCha_mod(c->getModifier(cha));
+		//ac
+		c->calculateAc();
+		//attack bonus
+		c->calculateBaseAttackBonus();
+		//damage bonus
+		c->calculateDamageBonus();
 	}
 	catch (exception e) {
 		c = new Character();
