@@ -1,4 +1,4 @@
-//! @file 
+ï»¿//! @file 
 //! @brief Driver file to create and execute the test suite and to launch the Map and Campaign Editor
 //!
 //! Brief instruction on how to set CppUnit:
@@ -8,7 +8,7 @@
 //!
 //!	 1. Unpack the CppUnit archive (https://sourceforge.net/projects/cppunit/files/cppunit/1.12.1/) to a directory of your choice, in this example I assume it is D:\. 
 //!  2. Go to D:/cppunit-1.12.1/src and open the CppUnitLibraries.dsw in Visual Studio.
-//!  3. Select the cppunit project in the Solution Explorer and go to 'Project > Properties > Configuration Properties > Librarian > General. Put "Debug\cppunit.lib" in the ‘Output File’ textbox. 
+//!  3. Select the cppunit project in the Solution Explorer and go to 'Project > Properties > Configuration Properties > Librarian > General. Put "Debug\cppunit.lib" in the â€˜Output FileÂEtextbox. 
 //!  4. Right-click on the cppunit project in the Solution Explorer pane and choose Build.
 //!  5. After successful compilation, D:/cppunit-1.12.1/lib/cppunit.lib is produced which you then need to setup the Visual Studio Linker with (see below).
 
@@ -20,21 +20,55 @@
 //!	  3. Go to 'Project > Properties > Linker > Input'. Put "D:\cppunit-1.12.1\lib\cppunit.lib" in the 'Additional Dependences' text box.
 //!	  4. Go to 'Project > Properties > Build Events > Post-Build Event'. Put '"$(TargetPath)"' in the 'Command Line' textbox.Put 'Unit Tests...' in the 'Description' textbox.
 
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/ui/text/TestRunner.h>
+
+
 #include <iostream>
 #include <sstream>
 #include <string>
+#include<fstream>
+
 #include "Map.h"
 #include "Campaign.h"
-using namespace std;
+#include "MapDirector.h"
+#include "MapBuilder.h"
+#include "MapSaveBuilder.h"
+#include "ItemCreationDriver.h"
+#include "CharacterDriver.h"
 
+#include "MonsterObserver.h"
+
+#include "CampaignListings.h"
+
+#include "CharacterListings.h"
+#include "MapObserver.h"
+#include "Boots.h"
+#include "Ring.h"
+
+#include "ItemGenerator.h"
+
+#include <iostream>
+
+#include "AbstractStrategy.h"
+#include "HumanPlayerStrategy.h"
+#include "FriendlyStrategy.h"
+#include "AggressorStrategy.h"
+
+#include "Character.h"
+#include "Fighter.h"
+
+#include "GameDriver.h"
+
+
+using namespace std;
+//adding comment just so i could push
 //! Runs the driver to launch the map and campaign editor.
 void runDriver();
 
 //! Shows the main menu for the map and campaign editor.
 void showMainMenuForMapAndCampaign();
+
+//! Start the main game demo.
+int playDriver();
 
 //! Allows the user to select which map to edit.
 //! @param	maps	Vector of all current existing maps.
@@ -82,6 +116,8 @@ void saveMaps(vector<Map*>* maps);
 //!	@param	campaigns	Vector of all existing campaigns
 void saveCampaigns(vector<Campaign*>* campaigns);
 
+void loadMaps(vector<Map*>* maps);
+
 // Methods that accept in out from thr user
 
 //! Accepts user to input the number of columns a new map will have.
@@ -109,11 +145,12 @@ int inputColumnIndexToEdit(int columnsInMap);
 //! @param	columns		The column index where the char will be inputed.	
 //!
 //! @return	The char inputed
-char inputCharObject(int row, int column);
+string inputCharObject(int row, int column);
 
 //! Allows the user to input the name for a map or a campaign.
 //! @return	The name for a map or campaign.
 string inputName();
+
 
 //! main() function. Entry point of the program
 //! It does the following: 
@@ -123,32 +160,44 @@ string inputName();
 //! 4. Run the test cases. 
 int main(int argc, char* argv[])
 {
+	/*
 	// Get the top level suite from the registry
 	CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry().makeTest();
-
 	// Adds the test to the list of test to run
 	CppUnit::TextUi::TestRunner runner;
 	runner.addTest( suite );
-
 	// Change the default outputter to a compiler error format outputter
 	runner.setOutputter( new CppUnit::CompilerOutputter( &runner.result(),
-	                                                     std::cerr ) );
+	std::cerr ) );
 	// Run the tests.
 	bool wasSucessful = runner.run();
 	getchar();
-
 	// Return error code 1 if the one of test failed.
-	 return wasSucessful ? 0 : 1;
-
-	 //runDriver();
-	 //return 0;
+	return wasSucessful ? 0 : 1;
+	*/
+	runDriver();
+	//return 0;
 }
 
 //! Shows a TUI (Text User Interface) to the user to allow them to select different options.
 void showMainMenuForMapAndCampaign() {
 
+	//Character variables
+	Character* character = NULL;
+
+	//Item variables
+	Item item;
+	Ring ring;
+	Ring* r;
+
+	//Map & Campaign variables
 	vector<Map*>* maps = new vector<Map*>();
 	vector<Campaign*>* campaigns = new vector<Campaign*>();
+
+	//Drivers
+	ItemCreationDriver icd = ItemCreationDriver();
+	CharacterDriver cd = CharacterDriver();
+
 	bool exitMenu;
 	string input;
 
@@ -178,8 +227,20 @@ void showMainMenuForMapAndCampaign() {
 		cout << "Enter 2 to edit a map.\n";
 		cout << "Enter 3 to create a campaign.\n";
 		cout << "Enter 4 to edit a campaign.\n";
-		cout << "Enter 5 to save the created maps\n";
-		cout << "Enter 6 to save the created campaigns\n";
+		cout << "Enter 5 to save the created maps.\n";
+		cout << "Enter 6 to save the created campaigns.\n";
+		cout << "Enter 7 to load existing maps from files.\n";
+		cout << "Enter 8 to create an item.\n";
+		cout << "Enter 9 to load an item.\n";
+		cout << "Enter 10 to create a character.\n";
+		cout << "Enter 11 to save the character.\n";
+		cout << "Enter 12 to load an existing character.\n";
+		cout << "Enter 13 to view character's inventory.\n";
+		cout << "Enter 14 to view character's equipment.\n";
+		cout << "Enter 15 to add items to inventory.\n";
+		cout << "Enter 16 to equip an item.\n";
+		cout << "Enter 17 to unequip an item.\n";
+		cout << "Enter 20 to play the game.\n";
 		getline(cin, input);
 		stringstream myStream(input);
 		if (myStream >> option) {
@@ -189,6 +250,7 @@ void showMainMenuForMapAndCampaign() {
 				break;
 
 			case 1:
+				cout << "\n\n";
 				rows = inputRowsForNewMap();
 				columns = inputColumnsForNewMap();
 				name = inputName();
@@ -198,32 +260,122 @@ void showMainMenuForMapAndCampaign() {
 				break;
 
 			case 2:
+				cout << "\n\n";
 				maps = selectMapToEdit(maps);
 				break;
 
 			case 3:
+				cout << "\n\n";
 				name = inputName();
 				campaigns->push_back(new Campaign(name));
 				break;
 
 			case 4:
+				cout << "\n\n";
 				selectCampaignToEdit(campaigns, maps);
 				break;
 
 			case 5:
+				cout << "\n\n";
 				saveMaps(maps);
 				break;
 
 			case 6:
+				cout << "\n\n";
 				saveCampaigns(campaigns);
 				break;
 
+			case 7:
+				cout << "\n\n";
+				loadMaps(maps);
+				break;
+
+			case 8:
+				cout << "\n\n";
+				icd.showItemMenu();
+				break;
+
+			case 9:
+				cout << "\n\n";
+				icd.showLoadMenu();
+				break;
+
+			case 10:
+				cout << "\n\n";
+				character = cd.createACharacter();
+				if (character != NULL)
+					cd.showSaveDialogue(character);
+				break;
+
+			case 11:
+				cout << "\n\n";
+				if (character != NULL)
+					cd.save(character, character->getName());
+				else
+					cout << "There is no character to save." << endl;
+				break;
+
+			case 12:
+				cout << "\n\n";
+				character = cd.showLoadMenu();
+				break;
+
+			case 13:
+				cout << "\n\n";
+				if (character != NULL)
+					character->printInventory();
+				else
+					cout << "No character selected" << endl;
+				break;
+
+			case 14:
+				cout << "\n\n";
+				if (character != NULL)
+					character->printEquipped();
+				else
+					cout << "No character selected" << endl;
+				break;
+
+			case 15:
+				cout << "\n\n";
+				if (character != NULL) {
+					item = icd.loadItem("MagicRing.txt");
+					ring = static_cast<Ring&>(item);
+					r = &ring;
+					character->addToInventory(r);
+				}
+				else
+					cout << "No character is selected" << endl;
+				break;
+
+			case 16:
+				cout << "\n\n";
+				if (character != NULL)
+					cd.selectItemToEquip(character);
+				else
+					cout << "No character selected." << endl;
+				break;
+
+			case 17:
+				cout << "\n\n";
+				if (character != NULL)
+					cd.selectItemToUnequip(character);
+				else
+					cout << "No character selected." << endl;
+				break;
+
+			case 20:
+				cout << "\n\n";
+				playDriver();
+
 			default:
+				cout << "\n\n";
 				cout << "Invalid option, please try again.\n" << endl;
 				break;
 			}
 		}
 		else {
+			cout << "\n\n";
 			cout << "Invalid option, please try again.\n" << endl;
 		}
 
@@ -231,7 +383,7 @@ void showMainMenuForMapAndCampaign() {
 
 	// Delete all maps in vector
 	for (std::vector<Map*>::size_type i = 0; i != maps->size(); i++) {
-		delete( maps->at(i));
+		delete(maps->at(i));
 		maps->at(i) = 0;
 	}
 	delete maps;
@@ -356,7 +508,7 @@ void editMap(Map * map, int mapNumber, string mapName)
 		int column = inputColumnIndexToEdit(columnsInMap);
 
 		// Input for char
-		char inputObject = inputCharObject(row, column);
+		string inputObject = inputCharObject(row, column);
 
 		// Edit the cell if it is not empty
 		if (!map->isOccupied(row, column)) {
@@ -659,7 +811,7 @@ void saveMaps(vector<Map*>* maps)
 				{
 					if (mapFile.is_open())
 					{
-						mapFile << maps->at(i)->getCharObject(row, column) << ",";
+						mapFile << maps->at(i)->get(row, column) << ",";
 					}
 					else cout << "Unable to open file\n";
 				}
@@ -714,7 +866,7 @@ void saveCampaigns(vector<Campaign*>* campaigns)
 					{
 						if (mapFile.is_open())
 						{
-							mapFile << maps->at(i)->getCharObject(row,column) << ",";
+							mapFile << maps->at(i)->get(row, column) << ",";
 						}
 						else cout << "Unable to open file\n";
 					}
@@ -728,6 +880,29 @@ void saveCampaigns(vector<Campaign*>* campaigns)
 		else {
 			cout << "Unable to save campaign " << campaignName << " because it contains maps which are invalid.\n";
 		}
+	}
+}
+
+void loadMaps(vector<Map*>* maps)
+{
+	cout << "***Load maps***\n";
+	cout << "Be sure to add the .txt extension at the end of the filename\n";
+	string name = inputName();
+	string path = "./maps/" + name;
+
+	try {
+		MapDirector mapDirector;
+		MapSaveBuilder* mapSaveBuilder = new MapSaveBuilder();
+		mapDirector.setMapBuilder(mapSaveBuilder);
+		mapDirector.constructMap(path);
+		maps->push_back(new Map(*(mapSaveBuilder->getMap())));
+
+		// Print the map
+		cout << "\nMap created from " << name;
+		maps->back()->printMap();
+	}
+	catch (...) {
+		cout << "Loading map from file: " << name << " failed. Make sure the file exists.";
 	}
 }
 
@@ -827,7 +1002,7 @@ int inputColumnIndexToEdit(int columnsInMap)
 }
 
 //! Accepts the char object the user wishes to enter into a cell.
-char inputCharObject(int row, int column)
+string inputCharObject(int row, int column)
 {
 	bool isInputValid = false;
 	char inputObject;
@@ -857,10 +1032,10 @@ char inputCharObject(int row, int column)
 			cout << "Invalid input, please try again.\n" << endl;
 		}
 	} while (!isInputValid);
-	return inputObject;
+	return input;
 }
 
-//! Accepts input to use as the name for a map or campaign
+//! Accepts input to use as the name of the object being worked on (map, campaign, character)
 string inputName()
 {
 	bool isInputValid = false;
@@ -869,11 +1044,13 @@ string inputName()
 	int option = -1;
 
 	do {
-		cout << "Enter the name for the map or campaign:\n";
+		cout << "\n";
+		cout << "Enter the name:\n";
 		getline(cin, input);
 		name = input;
 
 		if (!name.empty()) {
+			cout << "\n";
 			cout << "You entered: " << input << "\n";
 			cout << "Enter 0 to cancel\n";
 			cout << "Enter 1 to confirm\n";
@@ -883,10 +1060,12 @@ string inputName()
 			if (myStream >> option) {
 				switch (option) {
 				case 0:
+					cout << "\n\n";
 					isInputValid = false;
 					break;
 
 				case 1:
+					cout << "\n\n";
 					isInputValid = true;
 					break;
 
@@ -904,6 +1083,90 @@ string inputName()
 		}
 	} while (!isInputValid);
 	return name;
+}
+
+
+
+
+//! Code that was written without knowledge of Connor's classes.
+//! Next revision will be a combination of said classes with my own work
+int playDriver() {
+	// *********************************************************INITIALIZATION AND SELECTION OF MAP AND CHARACTER *********************************************************
+
+	Campaign* campaign = nullptr;
+	Character* chara = nullptr;
+
+	std::cout << "------------------------------\n";
+
+	CampaignListings* campaignChoiceOptions = new CampaignListings();
+	CharacterListings* characterChoiceOptions = new CharacterListings();
+
+	std::cout << "------------------------------\n";
+
+	if (campaignChoiceOptions->getNumberOfOptions() == 0 && characterChoiceOptions->getNumberOfOptions() == 0) {
+		std::cout << "No maps or characters\nGo make some.\n";
+		getchar();
+		return -1;
+	}
+	else if (campaignChoiceOptions->getNumberOfOptions() == 0 || characterChoiceOptions->getNumberOfOptions() == 0) {
+		std::cout << "No maps xor characters\nGo make some.\n";
+		getchar();
+		return -2;
+	}
+
+	bool repeat = true;
+	while (repeat) {
+
+		campaignChoiceOptions->displayMaps();
+		campaign = campaignChoiceOptions->acceptInput4Map();
+		MapObserver* mo1 = new MapObserver(campaign->getMap(0));
+		std::cout << mo1->printMap() << "\n";
+
+		characterChoiceOptions->displayCharacters();
+		chara = characterChoiceOptions->acceptInput4Character();
+		std::cout << chara->toString();
+		//Map pointer has not been set yet
+
+		std::cout << "\nYou're fine with this, right ?\nGive a 1 if yes and a 0 if no\n";
+		char confirmation[9001] = "";
+		std::cin >> confirmation;
+
+		if (strcmp("0", confirmation) == 0) {
+			std::cout << "\nWe'll do it again then...\n";
+			campaign->getMap(0)->detatch();
+			delete mo1;
+		}
+		else if (strcmp("1", confirmation) == 0) {
+			std::cout << "\nLets move on...\n";
+			//Set the map pointer
+			//chara->postInitialize(campaign->getMap(0));
+			campaign->getMap(0)->detatch();
+			delete mo1;
+			repeat = false;
+		}
+		else
+			std::cout << "What is a " << confirmation << " ?\n";
+	}
+
+	delete campaignChoiceOptions;
+	delete characterChoiceOptions;
+	// ******************************************************************************************************************
+
+
+
+
+
+
+
+
+	// ********************************************************* START OF GAME LOOP AND GAME PLAY *********************************************************
+
+	GameDriver gd(chara, campaign);
+
+
+	// ********************************************************* *********************************************************
+
+
 }
 
 //! Driver that calls showMainMenuForMapAndCampaign to run the Map and Campaign editor
