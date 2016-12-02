@@ -6,15 +6,20 @@
 #include <sstream>
 #include <vector>
 #include<iostream>
-
+#include "CharacterDirector.h"
+#include "CharacterBullyBuilder.h"
+#include "CharacterNimbleBuilder.h"
+#include "CharacterTankBuilder.h"
 
 CharacterDriver::CharacterDriver()
 {
+	log = new Logger();
 }
 
 
 CharacterDriver::~CharacterDriver()
 {
+	delete log;
 }
 
 //! Save a character to a file
@@ -76,9 +81,10 @@ void CharacterDriver::save(Character* c, std::string filename)
 		outfile << "weapon: " << c->getWeapon()->getName() << endl;
 	else
 		outfile << "weapon: -" << endl;
-
+	
 	// Save inventory
 	std::vector<Item*>* inv = c->getInventory();
+
 	outfile << "inventory: " << endl;
 	if (inv != NULL) {
 		{
@@ -86,8 +92,6 @@ void CharacterDriver::save(Character* c, std::string filename)
 				outfile << "- " << inv->at(i)->getName() << ", " << inv->at(i)->getType() << endl;
 		}
 	}
-
-
 	outfile.close();
 	log->LogGame("Character saved");
 }
@@ -339,20 +343,61 @@ Character* CharacterDriver::createACharacter() {
 
 	// Print options
 	cout << "****** Create a Character Menu ******\n";
-	cout << "Enter 0 to create a character at Level 1" << endl;
-	cout << "Enter 1 to create a character at a specific Level" << endl;
-	cout << "Enter 2 to go back to the main menu" << endl;
+
+
+	//cout << "Enter 0 to create a character at Level 1" << endl;
+	//cout << "Enter 1 to create a character at a specific Level" << endl;
+	//cout << "Enter 2 to go back to the main menu" << endl;
+	//std::getline(cin, input);
+	//stringstream myStream(input);
+	//if (myStream >> option) {
+	//	switch (option) {
+	//	case 0:
+	//		c = new Fighter();
+	//		name = inputName();
+	//		c->setName(name);
+	//		return c;
+	//		break;
+	//	case 1:
+	//		// Input for the level
+	//		do {
+	//			cout << "\n\n";
+	//			cout << "Please enter the desired Level of the character" << endl;
+	//			std::getline(cin, input);
+
+	//			stringstream myStream(input);
+	//			if (myStream >> level && level >= 1) {
+	//				isInputValid = true;
+	//			}
+	//			else {
+	//				cout << "\n\n";
+	//				cout << "Invalid level, please try again.\n" << endl;
+	//			}
+	//		} while (!isInputValid);
+	//		c = new Fighter(level);
+	//		name = inputName();
+	//		c->setName(name);
+	//		return c;
+	//		break;
+	//	case 2:
+	//		cout << "Go back to main menu" << endl;
+	//		cout << "\n\n";
+	//		return c;
+	//		break;
+	//	default:
+	//		return c;
+	//		break;
+	//	}
+	//}
+	//return c;
+
+	cout << "Enter 0 to select the level and class of the character" << endl;
+	cout << "Enter 1 to go back to the main menu" << endl;
 	std::getline(cin, input);
 	stringstream myStream(input);
 	if (myStream >> option) {
 		switch (option) {
 		case 0:
-			c = new Fighter();
-			name = inputName();
-			c->setName(name);
-			return c;
-			break;
-		case 1:
 			// Input for the level
 			do {
 				cout << "\n\n";
@@ -368,12 +413,9 @@ Character* CharacterDriver::createACharacter() {
 					cout << "Invalid level, please try again.\n" << endl;
 				}
 			} while (!isInputValid);
-			c = new Fighter(level);
 			name = inputName();
-			c->setName(name);
-			return c;
 			break;
-		case 2:
+		case 1:
 			cout << "Go back to main menu" << endl;
 			cout << "\n\n";
 			return c;
@@ -383,7 +425,68 @@ Character* CharacterDriver::createACharacter() {
 			break;
 		}
 	}
+
+	// Once level and name have been set, the character's class must be selected
+	c = selectFighterClass(level);
+	c->setName(name);
 	return c;
+}
+
+//! Asks the user to select a type of fighter class from
+//! bully, nimble and tank.
+Character* CharacterDriver::selectFighterClass(int level)
+{
+	string input;
+	// Variable that will hold the option for the text based menu
+	int option;
+	Character* c = NULL;
+	bool isInputValid;
+	option = -1;
+
+	// Setting up director
+	CharacterDirector characterDirector;
+	// Setting up builders
+	CharacterBullyBuilder* characterBullyBuilder;
+	CharacterNimbleBuilder* characterNimbleBuilder;
+	CharacterTankBuilder* characterTankBuilder;
+	Fighter* fighter;
+	cout << "Enter 0 to create a Bully fighter" << endl;
+	cout << "Enter 1 to create a Nimble fighter" << endl;
+	cout << "Enter 2 to create a Tank fighter" << endl;
+
+	std::getline(cin, input);
+	stringstream myStream(input);
+	if (myStream >> option) {
+		switch (option) {
+		case 0:
+			// Create a bully using the builder pattern
+			characterBullyBuilder = new CharacterBullyBuilder();
+			characterDirector.setCharacterBuilder(characterBullyBuilder);
+			characterDirector.constructCharacter(level);
+			fighter = characterBullyBuilder->getCharacter();
+			return fighter;
+			break;
+		case 1:
+			// Create nimble using the builder pattern
+			characterNimbleBuilder = new CharacterNimbleBuilder();
+			characterDirector.setCharacterBuilder(characterNimbleBuilder);
+			characterDirector.constructCharacter(level);
+			fighter = characterNimbleBuilder->getCharacter();
+			return fighter;
+			break;
+		case 2:
+			// Create a tank using the builder pattern
+			characterTankBuilder = new CharacterTankBuilder();
+			characterDirector.setCharacterBuilder(characterTankBuilder);
+			characterDirector.constructCharacter(level);
+			fighter = characterTankBuilder->getCharacter();
+			return fighter;
+			break;
+		default:
+			return c;
+			break;
+		}
+	}
 }
 
 //! Accepts input to use as the name of the object being worked on (map, campaign, character)

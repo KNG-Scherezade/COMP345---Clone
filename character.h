@@ -55,8 +55,10 @@ public:
 	void setMoveable(bool movable);
 
 	void create();
+	void createClass();
 	static int getModifier(int stat);
 	void generateRandomStats();
+	void generateModifiers();
 	void calculateHp();
 	void calculateAc();
 	void calculateBaseAttackBonus();
@@ -89,6 +91,14 @@ public:
 	//! Get the level of the character
 	//! @return	Level of the character
 	int getLevel() { return level; }
+
+	//! Gets the number of attacks of the character
+	//! @return the number of attacks
+	int Character::getNumAtks() { return numAtks; };
+
+	//! Set the number of attacks of the character
+	//! @param numAtksVal	Number of attacks
+	void Character::setNumAtks(int numAtksVal) { numAtks = numAtksVal; }
 
 	//! Set the strength attribute of the character
 	//! @param strVal	Strength value
@@ -317,6 +327,7 @@ private:
 	int ac;
 	int attackBonus;
 	int damageBonus;
+	int numAtks;
 
 	vector<Item*> inventory;
 	Helmet* helmet;

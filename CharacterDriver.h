@@ -36,4 +36,5 @@ public:
 	void selectItemToUnequip(Character* c);
 private:
 	Logger* log;
+	Character* selectFighterClass(int level);
 };

@@ -32,6 +32,7 @@
 
 //! Default no param constructor
 Character::Character() {
+	log = new Logger();
 	level = 1;
 	create();
 	inventory = vector<Item*>();
@@ -41,6 +42,7 @@ Character::Character() {
 //! Constructor that takes a level to initialize the stats accordingly
 //! @param levelVal	Level of character
 Character::Character(int levelVal) {
+	log = new Logger();
 	level = 1;
 	create();
 	inventory = vector<Item*>();
@@ -58,7 +60,7 @@ Character::Character(int levelVal) {
 }
 
 Character::Character(Map* map) {
-
+	log = new Logger();
 	level = 1;
 	create();
 
@@ -68,6 +70,7 @@ Character::Character(Map* map) {
 	log->LogCharacter("Character named: " + name + " created at level: " + std::to_string(level));
 
 }
+
 //! To be used if constructor does not set the map pointer
 void Character::postInitialize(Map* map) {
 	mapPtr = map;
@@ -157,6 +160,25 @@ void Character::create() {
 	calculateAc();
 	calculateBaseAttackBonus();
 	calculateDamageBonus();
+}
+
+//! Method to call all the appropriate methods used during class creation.
+void Character::createClass() {
+	generateModifiers();
+	calculateAc();
+	calculateBaseAttackBonus();
+	calculateDamageBonus();
+}
+
+//! Recalculates the modifiers
+void Character::generateModifiers() {
+	//Set modifiers
+	str_mod = getModifier(str);
+	dex_mod = getModifier(dex);
+	con_mod = getModifier(con);
+	intel_mod = getModifier(intel);
+	wis_mod = getModifier(wis);
+	cha_mod = getModifier(cha);
 }
 
 //! Generate the attribute values for the six major stats.
