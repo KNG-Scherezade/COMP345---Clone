@@ -1,5 +1,7 @@
 #include "AggressorStrategy.h"
 #include "Monster.h"
+#include "Attack.h"
+#include "Logger.h"
 
 #define CHARA_POSITION_X ((Monster*) chara)->position[1]//cols are x
 #define CHARA_POSITION_Y ((Monster*) chara)->position[0]//rows are y
@@ -22,6 +24,9 @@ int AggressorStrategy::decideAction(GenericMapItem* chara){
 	MONSTER->createPathToCharacter(
 		new Node(MAP->calculateNodeId(MONSTER->position[1], MONSTER->position[0]), MONSTER->position[1], MONSTER->position[0]), //Monster local
 		new Node(MAP->calculateNodeId(PLAYER[0], PLAYER[1]), PLAYER[0], PLAYER[1])); //Player local
+	Logger log;
+	log.LogCharacter("Monster checks path to character for movement or attack");
+	log.LogMap("Monster checks path to character for movement or attack");
 
 	if (((Monster*)chara)->pathToCharacter.size() < 1)
 		attack(chara);
@@ -32,7 +37,12 @@ int AggressorStrategy::decideAction(GenericMapItem* chara){
 }
 
 void AggressorStrategy::attack(GenericMapItem* chara){
+	Logger log;
+	log.LogCharacter("Character is in range of an attack");
 	std::cout << "It Attacks\n";
+	Attack atk;
+	std::cout << atk.makeAttack(MONSTER, ((Monster*)chara)->getMap()->getCharacter());
+
 }
 
 int AggressorStrategy::interact(GenericMapItem* chara){
@@ -42,4 +52,6 @@ void AggressorStrategy::move(GenericMapItem* chara){
 	((Monster*)chara)->position[0] = ((Monster*)chara)->pathToCharacter.at(0).at(0); //0 x 
 	((Monster*)chara)->position[1] = ((Monster*)chara)->pathToCharacter.at(0).at(1);// 1 y
 	MONSTER->pathToCharacter.clear();
+	Logger log;
+	log.LogMap("Monster moved to" + to_string(((Monster*)chara)->position[0]) + " " + to_string(((Monster*)chara)->position[1]));
 }

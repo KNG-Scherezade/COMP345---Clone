@@ -4,11 +4,20 @@
 //!  This class implements functions that prompts the user to create items and save/load
 #pragma once
 #include <string>
+
+
 class ItemCreationDriver
 {
 public:
 	//! Displays the item menu and accepts input to guide the item creation process
 	void showItemMenu();
+
+	Item* loadRandomItem();
+
+	//! Loads the item in the given file
+	//! @param fileName name of file containing item to be loaded
+	//! @return returns the pointer to the loaded item
+	Item* loadItemPtr(string fileName);
 
 	//! Loads the item in the given file
 	//! @param fileName name of file containing item to be loaded

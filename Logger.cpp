@@ -21,7 +21,7 @@ void Logger::LogGame(std::string message)
 {
 	if (gameLogOn) {
 		std::ofstream outputFile;
-		outputFile.open("Log.txt", std::ios_base::app);
+		outputFile.open("Log.txt");
 
 		outputFile << "Type: GAME || " << message << std::endl;
 
@@ -45,21 +45,19 @@ void Logger::LogCharacter(std::string message)
 {
 	if (characterLogOn) {
 		std::ofstream outputFile;
-
-		outputFile.open("Log.txt", std::ios_base::app);
+		outputFile.open("Log.txt");
 
 		outputFile << "Type: Character || " << message << std::endl;
 
 		outputFile.close();
 	}
-
 }
 
 void Logger::LogDice(std::string message)
 {
 	if (diceLogOn) {
 		std::ofstream outputFile;
-		outputFile.open("Log.txt", std::ios_base::app);
+		outputFile.open("Log.txt");
 
 		outputFile << "Type: DICE || " << message << std::endl;
 

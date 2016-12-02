@@ -2,6 +2,8 @@
 #include "Monster.h"
 #include "Node.h"
 
+#include "Attack.h"
+
 #define CHARA_POSITION_X ((Monster*) chara)->position[1]//cols are x
 #define CHARA_POSITION_Y ((Monster*) chara)->position[0]//rows are y
 
@@ -36,8 +38,11 @@ int FriendlyStrategy::decideAction(GenericMapItem* chara){
 void FriendlyStrategy::attack(GenericMapItem* chara){
 	if (!MONSTER->attacked)
 		std::cout << "It doesn't Attack\n";
-	else
+	else {
 		std::cout << "It attacked in vengence\n";
+		Attack atk;
+		std::cout << atk.makeAttack(MONSTER, ((Monster*)chara)->getMap()->getCharacter());
+	}
 }
 
 int FriendlyStrategy::interact(GenericMapItem* chara){

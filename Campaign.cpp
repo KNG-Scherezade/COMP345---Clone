@@ -52,7 +52,7 @@ void Campaign::addMap(Map * map)
 
 	mapsInCampaign++;
 	currentMapIndex++;
-	maps->push_back(new Map(*map));
+	maps->push_back(map);
 	cout << "Map " << map->getMapName() << " has been added to campaign " << campaignName << endl;
 }
 

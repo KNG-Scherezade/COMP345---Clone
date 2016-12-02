@@ -16,14 +16,14 @@ public:
 	virtual string getName() { return name; };
 	void setName(string i_name) { name = i_name; };
 	string getType() { return type; };
-	
+
 	string toString();
 	void setLevel(int lvl) { level = lvl; }
 
 private:
 
- 
-protected:	
+
+protected:
 	string name;
 	int str;
 	int dex;
@@ -37,4 +37,3 @@ protected:
 	int dmg;
 	string type;
 };
-

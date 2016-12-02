@@ -100,7 +100,6 @@ void Map::fillCell(int row, int column, string obj)
 	//If it's a chest, push it into the vector
 	else if (obj == "&" || obj == "t") {
 		ItemContainer* aChest = new ItemContainer(this, column, row);
-		srand(time(NULL));
 		chests.push_back(aChest);
 	
 	}
@@ -527,6 +526,9 @@ Character* Map::getCharacter() {
 
 void Map::attach(Observer* obs) {
 	listeners.push_back(obs);
+}
+void Map::detatch() {
+	listeners.clear();
 }
 void Map::notify() {
 	for each (Observer* obs in listeners)

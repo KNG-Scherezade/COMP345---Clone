@@ -31,7 +31,7 @@ void CharacterBullyBuilder::buildCharacter(int level)
 	// Ability score generation
 	Dice dice = Dice();
 
-	
+
 	vector<int> scores = vector<int>(6);
 
 	// For all 6 ability scores
@@ -91,4 +91,3 @@ void CharacterBullyBuilder::buildCharacter(int level)
 	c_character->setNumAtks((level - 1) / 5 + 1);
 
 }
-

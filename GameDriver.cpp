@@ -4,6 +4,10 @@
 #include "MonsterObserver.h"
 
 #include "Map.h"
+#include "MapObserver.h"
+#include "Campaign.h"
+
+#include "Logger.h"
 
 #include "HumanPlayerStrategy.h"
 #include "AggressorStrategy.h"
@@ -12,12 +16,17 @@
 #include "ItemGenerator.h"
 
 
-GameDriver::GameDriver(Character* chara, Map* map)
+GameDriver::GameDriver(Character* chara, Campaign* campaign)
 {
-	setup(chara, map);
+	log = new Logger();
+	character = chara;
+	this->campaign = campaign;
+	currentMap = 0;
 
-	map->notify();
+	setup(chara, currentMap);
+	campaign->getMap(currentMap)->notify();
 
+	log->LogGame("Game loop ended, setup ended");
 	gameLoop();
 }
 
@@ -26,18 +35,21 @@ GameDriver::~GameDriver()
 {
 }
 
-void GameDriver::setup(Character* chara, Map* map) {
+void GameDriver::setup(Character* chara,  int mapIndex) {
 	gameRunning = true;
-	character = chara;
-	this->map = map;
-
+	map = campaign->getMap(mapIndex);
+	log->LogMap("System loads map " + std::to_string(mapIndex) + " of the campaign of " + std::to_string(campaign->getMaps()->size()));
+	mo = new MapObserver(map);
+	chara->postInitialize(map);
 	chara->configurePosition();
 	chara->setStrategy(new HumanPlayerStrategy());
 
 	for each(ItemContainer* ic in map->getChests()) {
 		ChestObserver* co = new ChestObserver(ic);
+		ic->setItemLevels(chara->getLevel());
 	}
-
+	log->LogGame("Chests given observers");
+	log->LogGame("All chests set to player level");
 	int count = 0;
 	for each(Monster* mon in map->getMonsters()) {
 		mon->levelUpStats(chara->getLevel());
@@ -49,42 +61,83 @@ void GameDriver::setup(Character* chara, Map* map) {
 			mon->setStrategy(new FriendlyStrategy());
 		}
 	}
+	log->LogGame("monsters set to player level");
+	log->LogGame("monsters Given strategies based on mod 2");
 }
 
 void GameDriver::gameLoop() {
 	while (gameRunning) {
+		log->LogGame("Turn sequences start");
 		runTurns();
-		if (exit)
-			swapMaps();
+		if (exit) {
+			log->LogGame("Game switches maps");
+			swapMaps(currentMap);
+			for each(ItemContainer* ic in character->getMap()->getChests()) {
+				ic->setItemLevels(character->getLevel());
+			}
+			log->LogGame("Item levels were set");
+			map->notify();
+			exit = false;
+		}
+		log->LogGame("Turn sequences end");
 	}
 
 	std::cout << "GAME OVER\n";
-	getchar();	getchar();
-
+	if(win)	std::cout << "YOU WIN\n";
+	else std::cout << "YOU DIED\nenter a key";
+	log->LogGame("Game has been concluded. User returned to main menu");
+	getchar();
 }
 void GameDriver::runTurns() {
+	if (character->getHp() <= 0) {
+		log->LogCharacter("Character has 0 HP and has died. Game restarting to menu");
+		win = false;
+		gameRunning = false;
+		exit = false;
+		cin.ignore();
+		return;
+	}
+	for (int i = 0; i < character->getNumAtks(); i++) {
+		log->LogCharacter("Character can move :" + to_string(i) + "/" + to_string(character->getNumAtks()) + "Times");
 		int state = character->executeStrategy();
-		if (state == 1) {
-			gameRunning = false;
+		if (state == 1) { //1 implies interaction over exit point
+			currentMap++;
+			exit = true;
+			return;
 		}
+		if (state > 0)
+			i--;
+
 		for each(Monster* mon in map->getMonsters()) {
 			if (mon->dead) {
 				ItemContainer* newIC = new ItemContainer(map, mon->getPosition()[0], mon->getPosition()[1]);
-				ItemGenerator ig;
-				newIC->addItem(ig.generateItemPtr(character->getLevel()));
 
 				ChestObserver* newCO = new ChestObserver(newIC);
 				map->addChest(newIC);
 				map->removeMonster(mon);
-			}
-			else {
-				mon->executeStrategy();
+				log->LogGame("Monster died, was removed and replaced by a chest");
 			}
 		}
-		map->notify();
+		log->LogGame("Game checks if monsters are dead");
+	}
+	log->LogGame("Game switches to monster turns");
+	for each(Monster* mon in map->getMonsters()) {
+			mon->executeStrategy();
+
+	}
+	map->notify();
 }
 
-void GameDriver::swapMaps() {}
+void GameDriver::swapMaps(int mapNumber) {
+	map->detatch();
+	if (mapNumber > campaign->getMaps()->size() - 1) {
+		log->LogGame("User is out of maps and has won");
+		gameRunning = false;
+		win = true;
+		return;
+	}
+	setup(character, mapNumber);
+}
 
 
 

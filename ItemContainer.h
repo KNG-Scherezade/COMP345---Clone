@@ -31,7 +31,7 @@ public:
 	void attach(Observer* obs);
 
 	std::string type;
-	
+	void setItemLevels(int level);
 private:
 	vector<Item*> itemList;
 

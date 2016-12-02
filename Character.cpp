@@ -75,23 +75,21 @@ Character::Character(Map* map) {
 	log->LogCharacter("Character named: " + name + " created at level: " + std::to_string(level));
 
 }
-
 //! To be used if constructor does not set the map pointer
+//! also sets moster levels to player level
 void Character::postInitialize(Map* map) {
 	mapPtr = map;
 	moveable = (true);
 	mapPtr->setCharacter(this);
-
 	mapPtr->characterInitialized = true;
-
-	for each(ItemContainer* ic in mapPtr->getChests()) {
-		ItemGenerator ig;
-		ic->addItem(ig.generateItemPtr(level));
-	}
-	for each(Monster* mons in mapPtr->getMonsters()) {
-		mons->levelUpStats(level);
-	}
-	log->LogCharacter("Character named: " + name + " created at level: " + std::to_string(level));
+	numAtks = 1 + (level / 5);
+	//for each(ItemContainer* ic in mapPtr->getChests()) {
+	//	ic->setItemLevels(level);
+	//}
+	//for each(Monster* mons in mapPtr->getMonsters()) {
+	//	mons->levelUpStats(level);
+	//}
+	log->LogCharacter("Character named: " + name + " Initialized on map ");
 }
 
 //! Constructor that takes a level to initialize the stats accordingly
@@ -164,12 +162,12 @@ bool Character::validateNewCharacter()
 //! Method to call all the appropriate methods used during character creation.
 void Character::create() {
 	generateRandomStats();
+	numAtks = 1 + level / 5;
 	calculateHp();
 	calculateAc();
 	calculateBaseAttackBonus();
 	calculateDamageBonus();
 }
-
 //! Method to call all the appropriate methods used during class creation.
 void Character::createClass() {
 	generateModifiers();
@@ -231,7 +229,7 @@ void Character::generateRandomStats()
 void Character::calculateHp()
 {
 	hp = abs(con_mod) + hpRollAccumulator;
-	maxHp = abs(con_mod)  + hpRollAccumulator;
+	maxHp = abs(con_mod) + hpRollAccumulator;
 }
 
 //! Calculates the armor class of the character.
@@ -239,7 +237,7 @@ void Character::calculateHp()
 void Character::calculateAc()
 {
 	ac = 10 + dex_mod;
-	
+
 	if (helmet != NULL)
 		ac += helmet->getArmorClass();
 	if (armor != NULL)
@@ -272,8 +270,8 @@ void Character::levelUp() {
 	str++;
 	dex++;
 	con++;
+	numAtks = 1 + level / 5;
 
-	hpRollAccumulator += dice.rollD10();
 	//Call relevant methods to update based on new stat increase
 	str_mod = (getModifier(str));
 	dex_mod = (getModifier(dex));
@@ -710,10 +708,13 @@ void Character::checkMove(std::string moveDir) {
 	else {
 		moveable = (false);
 	}
+	log->LogMap("Checked if moving square was occupied");
 	//std::cout << rtn[1] << " " << rtn[0] << "\n";
 	SET_POSITION;
+	log->LogMap("Positions was set on map at " + to_string(rtn[0]) + " " + to_string(rtn[1]));
 	//Set your location on the map
 	SET_CURRENT_SQUARE;
+	log->LogMap("Current square was set on map");
 	mapPtr->notify();
 }
 
@@ -892,4 +893,5 @@ int Character::executeStrategy() {
 
 void Character::setStrategy(AbstractStrategy* strat) {
 	as = strat;
+	log->LogCharacter("Character was given its strategy");
 }

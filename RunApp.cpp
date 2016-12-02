@@ -187,8 +187,6 @@ void showMainMenuForMapAndCampaign() {
 
 	//Item variables
 	Item item;
-	Ring ring;
-	Ring* r;
 
 	//Map & Campaign variables
 	vector<Map*>* maps = new vector<Map*>();
@@ -241,6 +239,7 @@ void showMainMenuForMapAndCampaign() {
 		cout << "Enter 16 to equip an item.\n";
 		cout << "Enter 17 to unequip an item.\n";
 		cout << "Enter 20 to play the game.\n";
+		cout << "Enter 21 to edit an item.\n";
 		getline(cin, input);
 		stringstream myStream(input);
 		if (myStream >> option) {
@@ -297,7 +296,7 @@ void showMainMenuForMapAndCampaign() {
 
 			case 9:
 				cout << "\n\n";
-				icd.showLoadMenu();
+				item = icd.showLoadMenu();
 				break;
 
 			case 10:
@@ -339,13 +338,15 @@ void showMainMenuForMapAndCampaign() {
 			case 15:
 				cout << "\n\n";
 				if (character != NULL) {
-					item = icd.loadItem("MagicRing.txt");
-					ring = static_cast<Ring&>(item);
-					r = &ring;
-					character->addToInventory(r);
+					if (item.getName() != "unknown")
+					{
+						character->addToInventory(&item);
+					}
+					else
+						cout << "No item is selected" << endl;
 				}
 				else
-					cout << "No character is selected" << endl;
+					cout << "No character selected" << endl;
 				break;
 
 			case 16:
@@ -367,6 +368,15 @@ void showMainMenuForMapAndCampaign() {
 			case 20:
 				cout << "\n\n";
 				playDriver();
+				break;
+
+			case 21:
+				cout << "\n\n";
+				if (item.getName() != "unknown")
+					icd.showEditDialogue(item);
+				else
+					cout << "There is no item selected." << endl;
+				break;
 
 			default:
 				cout << "\n\n";
@@ -1088,6 +1098,7 @@ string inputName()
 
 
 
+
 //! Code that was written without knowledge of Connor's classes.
 //! Next revision will be a combination of said classes with my own work
 int playDriver() {
@@ -1168,6 +1179,7 @@ int playDriver() {
 
 
 }
+
 
 //! Driver that calls showMainMenuForMapAndCampaign to run the Map and Campaign editor
 void runDriver()

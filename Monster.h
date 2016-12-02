@@ -23,6 +23,9 @@ public:
 	~Monster();
 	int getHealth() { return hitpoints; }
 	int getAttack() { return attack; }
+	int getStrength() { return str; }
+	int getCurrentHP() { return currentHP; }
+	void setCurrentHP(int hp) { currentHP = hp; }
 	void setHealth(int newHealth) { hitpoints = newHealth; }
 	void setAttack(int newAttack) { attack = newAttack; }
 	void setLevel(int newLevel) { level = newLevel; }
@@ -36,6 +39,9 @@ public:
 
 	void notify();
 	void attach(Observer* obs);
+	int calculateBaseAttackBonus();
+
+	int calculateAc();
 
 	Map* getMap() { return mapPtr; }
 
@@ -50,15 +56,22 @@ public:
 
 	std::string getType() { return type; }
 
+	std::string toString();
+
 	void setAttacked(bool atk) { attacked = atk; }
 	bool attacked;
 	bool dead;
+
+	int ac;
+
+	int getModifier(int stat);
 private:
 	Map* mapPtr;
 	AbstractStrategy* as;
 	std::string type;
 
 	int hitpoints;
+	int currentHP;
 	int attack;
 	int level;
 	int str;
@@ -67,5 +80,6 @@ private:
 	int wis;
 	int cha;
 	int intel;
+
 };
 

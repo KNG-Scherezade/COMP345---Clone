@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
+#include <random>
 //#include <string>
 #include "Helmet.h"
 #include "Armor.h"
@@ -200,6 +202,247 @@ void ItemCreationDriver::showItemMenu()
 	}
 }
 
+#include <windows.h>
+Item* ItemCreationDriver::loadRandomItem() {
+	WIN32_FIND_DATAA itemFile;
+	HANDLE directoryToSearch = FindFirstFileA("./Items/*", &itemFile);
+	std::vector < std::string > itemPaths;
+		if (directoryToSearch)
+		{
+			do
+			{
+				std::cout << itemFile.cFileName << std::endl;
+				std::string localPath = itemFile.cFileName;
+				if (localPath != "." && localPath != "..")
+					itemPaths.push_back(localPath);
+			} while (FindNextFileA(directoryToSearch, &itemFile));
+		}
+
+		// create source of randomness, and initialize it with non-deterministic seed
+		std::random_device r;
+		std::seed_seq seed{ r(),r(),r(),r(),r(),r() };
+		std::mt19937 eng{ seed };
+
+		// a distribution that takes randomness and produces values in the range of 3 to 18
+		if (itemPaths.size() > 0) {
+			std::uniform_int_distribution<> dist(0, itemPaths.size() - 1);
+			return loadItemPtr(itemPaths.at(dist(eng)));
+		}
+		else
+			return new Item();
+}
+
+
+//! Loads the item in the given file
+//! @param fileName name of file containing item to be loaded
+//! @return returns the loaded item
+Item* ItemCreationDriver::loadItemPtr(string fileName)
+{
+	int ac;
+	int dex;
+	int wis;
+	int str;
+	int intel;
+	int cha;
+	int con;
+	int dmg;
+	int atk;
+	int level;
+	string name;
+	string line;
+	string nextAttribute;
+	ifstream infile;
+	stringstream ss;
+	std::string path = "./Items/" + fileName;
+	infile.open(path);
+	// return if the file name is wrong
+	if (infile.is_open() == false)
+	{
+		cout << "\nUnable to open file\n";
+		// wrong file name, return error item
+		Item* errorItem = new Item();
+		errorItem->setName("error");
+		return errorItem;
+	}
+	getline(infile, line);
+	string type = line.substr(line.find(":") + 2, line.length());
+	if (type == "helmet")
+	{
+		// name
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
+		// level
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		ss << nextAttribute;
+		level = stoi(nextAttribute);
+		// armor class
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		ss << nextAttribute;
+		ac = stoi(nextAttribute);
+		// intelligence
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		ss << nextAttribute;
+		intel = stoi(nextAttribute);
+		// wisdom
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		ss << nextAttribute;
+		wis = stoi(nextAttribute);
+		Helmet* helmet = new Helmet(ac, intel, wis, level);
+		helmet->setName(name);
+		return helmet;
+	}
+	else if (type == "armor")
+	{
+		// name
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
+		// level
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		level = stoi(nextAttribute);
+		// armor class
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		ac = stoi(nextAttribute);
+		Armor* armor = new Armor(ac, level);
+		armor->setName(name);
+		return armor;
+	}
+	else if (type == "belt")
+	{
+		// name
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
+		// level
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		level = stoi(nextAttribute);
+		// strength
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		str = stoi(nextAttribute);
+		// constitution
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		con = stoi(nextAttribute);
+		Belt* belt = new Belt(str, con, level);
+		belt->setName(name);
+		return belt;
+	}
+	else if (type == "boots")
+	{
+		// name
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
+		// level
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		level = stoi(nextAttribute);
+		// dexterity
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		dex = stoi(nextAttribute);
+		// armor class
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		ac = stoi(nextAttribute);
+		Boots* boots = new Boots(dex, ac, level);
+		boots->setName(name);
+		return boots;
+	}
+	else if (type == "ring")
+	{
+		// name
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
+		// level
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		level = stoi(nextAttribute);
+		// armor class
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		ac = stoi(nextAttribute);
+		// wisdom
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		wis = stoi(nextAttribute);
+		// str
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		str = stoi(nextAttribute);
+		// charisma
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		cha = stoi(nextAttribute);
+		// constitution
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		con = stoi(nextAttribute);
+		Ring* ring = new Ring(ac, wis, str, cha, con, level);
+		ring->setName(name);
+		return ring;
+	}
+	else if (type == "shield")
+	{
+		// name
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
+		// level
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		ss << nextAttribute;
+		level = stoi(nextAttribute);
+		// armor class
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		ac = stoi(nextAttribute);
+		Shield* shield = new Shield(ac, level);
+		shield->setName(name);
+		return shield;
+	}
+	else if (type == "weapon")
+	{
+		// name
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		name = nextAttribute;
+		// level
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		level = stoi(nextAttribute);
+		// attack
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		atk = stoi(nextAttribute);
+		// damage
+		getline(infile, line);
+		nextAttribute = line.substr(line.find(":") + 2, line.length());
+		dmg = stoi(nextAttribute);
+		Weapon* weapon = new Weapon(atk, dmg, level);
+		weapon->setName(name);
+		return weapon;
+	}
+
+	infile.close();
+
+	// Something wrong must have happened to get here
+	Item* errorItem = new Item();
+	errorItem->setName("error");
+	return errorItem;
+}
+
+
 //! Loads the item in the given file
 //! @param fileName name of file containing item to be loaded
 //! @return returns the loaded item
@@ -220,7 +463,8 @@ Item ItemCreationDriver::loadItem(string fileName)
 	string nextAttribute;
 	ifstream infile;
 	stringstream ss;
-	infile.open(fileName);
+	std::string path = "./Items/" + fileName;
+	infile.open(path);
 	// return if the file name is wrong
 	if (infile.is_open() == false)
 	{
@@ -524,7 +768,6 @@ void ItemCreationDriver::showSaveDialogue(Item item)
 	else
 		cout << "Invalid option";
 }
-
 //! Prompts the user to edit an item
 Item ItemCreationDriver::showEditDialogue(Item item)
 {

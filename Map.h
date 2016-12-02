@@ -137,6 +137,7 @@ public:
 	void removeMonster(Monster* mon);
 	//Subject inheritence / observer methods
 	void attach(Observer* obs);
+	void detatch();
 	void notify();
 
 	//! Allocates memory for the map and sets the cell to empty values.

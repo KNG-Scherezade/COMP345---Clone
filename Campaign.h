@@ -28,6 +28,10 @@ public:
 	//! Returns a pointer to the vector of maps int the campaign
 	vector<Map*>* getMaps();
 
+	//! Gets map at index
+	Map* getMap(int i) {
+		return maps->at(i);
+	}
 	//! Adds a new map to the campaign
 	//! @param	map	New map to add to the vector of maps
 	void addMap(Map *map);

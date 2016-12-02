@@ -1,4 +1,6 @@
 #include "ItemContainer.h"
+#include "ItemGenerator.h"
+#include "ItemCreationDriver.h"
 using namespace std;
 
 ItemContainer::ItemContainer()
@@ -13,9 +15,14 @@ ItemContainer::ItemContainer(vector<Item*> items)
 	type = "chest";
 }
 
+//!draws from the items in the file to create an item
 ItemContainer::ItemContainer(Map* map, int x, int y)
 {
 	itemList = vector<Item*>();
+	ItemCreationDriver icd;
+	itemList.push_back(icd.loadRandomItem());
+	if (map->getCharacter() != NULL)
+		itemList.at(0)->setLevel(map->getCharacterLevel());
 
 	this->map = map;
 	position[0] = x;
@@ -25,6 +32,7 @@ ItemContainer::ItemContainer(Map* map, int x, int y)
 
 ItemContainer::ItemContainer(vector<Item*> items, Map* map, int x, int y)
 {
+
 	itemList = items;
 
 	this->map = map;
@@ -82,4 +90,10 @@ void ItemContainer::notify() {
 }
 void ItemContainer::attach(Observer* obs) {
 	listeners.push_back(obs);
+}
+
+void ItemContainer::setItemLevels(int level) {
+	for each(Item* item in itemList) {
+		item->setLevel(level);
+	}
 }

@@ -1,5 +1,5 @@
 #include "CharacterListings.h"
-
+#include "Logger.h"
 
 
 CharacterListings::CharacterListings()
@@ -31,6 +31,8 @@ Character* CharacterListings::acceptInput4Character() {
 	}
 	std::cout << "\n";
 	CharacterDriver cd;
+	Logger log;
+	log.LogCharacter("User selected Character " + pathNames.at(index));
 	return cd.load(pathNames.at(index));
 }
 
