@@ -33,6 +33,7 @@
 //! Default no param constructor
 Character::Character() {
 	log = new Logger();
+	Dice dice = Dice();
 	level = 1;
 	create();
 	inventory = vector<Item*>();
@@ -42,6 +43,7 @@ Character::Character() {
 //! @param levelVal	Level of character
 Character::Character(int levelVal) {
 	log = new Logger();
+	Dice dice = Dice();
 	level = 1;
 	create();
 	inventory = vector<Item*>();
@@ -61,6 +63,7 @@ Character::Character(int levelVal) {
 Character::Character(Map* map) {
 	log = new Logger();
 	level = 1;
+	Dice dice = Dice();
 	create();
 
 	mapPtr = map;
@@ -220,8 +223,8 @@ void Character::generateRandomStats()
 //! Hitpoints are calculated by adding the constitution modifier to the character level
 void Character::calculateHp()
 {
-	hp = abs(con_mod) + level;
-	maxHp = abs(con_mod) + level;
+	hp = abs(con_mod) * dice.rollD10() + level;
+	maxHp = abs(con_mod) * dice.rollD10() + level;
 }
 
 //! Calculates the armor class of the character.
