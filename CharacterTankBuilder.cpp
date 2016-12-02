@@ -39,11 +39,6 @@ void CharacterTankBuilder::buildCharacter(int level)
 	{
 		// rolls 4 d6 and stores the result in an array in descending order
 		int* rolls = dice.roll(4);
-		// log all 4 dice rolls for the ability score at the given iteration
-		log.LogDice("ability score " + to_string(i) + " d6 roll 1 value: " + to_string(rolls[0]));
-		log.LogDice("ability score " + to_string(i) + " d6 roll 2 value: " + to_string(rolls[1]));
-		log.LogDice("ability score " + to_string(i) + " d6 roll 3 value: " + to_string(rolls[2]));
-		log.LogDice("ability score " + to_string(i) + " d6 roll 4 value: " + to_string(rolls[3]));
 		// Score is equal to the sum of the three highest d6 rolls		
 		scores[i] = rolls[0] + rolls[1] + rolls[2];
 		log.LogDice("ability score stored using the 3 highest rolls: " + to_string(scores[i]));
@@ -79,7 +74,6 @@ void CharacterTankBuilder::buildCharacter(int level)
 	for (int i = 0; i < level; i++)
 	{
 		int roll = dice.rollD10();
-		log.LogDice("hp roll d10 value: " + to_string(roll));
 		hp += roll + c_character->getCon_mod();
 	}
 

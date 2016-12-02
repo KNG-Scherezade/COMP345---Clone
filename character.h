@@ -13,6 +13,7 @@
 #include "ItemContainer.h"
 
 #include "Logger.h"
+#include "Dice.h"
 
 #include "AbstractStrategy.h"
 #include "GenericMapItem.h"
@@ -324,6 +325,7 @@ private:
 	int cha_mod;
 	int hp;
 	int maxHp;
+	int hpRollAccumulator;
 	int ac;
 	int attackBonus;
 	int damageBonus;
@@ -337,6 +339,6 @@ private:
 	Belt* belt;
 	Boots* boots;
 	Weapon* weapon;
-
+	Dice dice;
 	Logger* log;
 };

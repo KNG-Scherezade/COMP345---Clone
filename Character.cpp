@@ -35,6 +35,7 @@ Character::Character() {
 	log = new Logger();
 	Dice dice = Dice();
 	level = 1;
+	hpRollAccumulator = dice.rollD10();
 	create();
 	inventory = vector<Item*>();
 }
@@ -44,6 +45,7 @@ Character::Character() {
 Character::Character(int levelVal) {
 	log = new Logger();
 	Dice dice = Dice();
+	hpRollAccumulator = dice.rollD10();
 	level = 1;
 	create();
 	inventory = vector<Item*>();
@@ -64,6 +66,7 @@ Character::Character(Map* map) {
 	log = new Logger();
 	level = 1;
 	Dice dice = Dice();
+	hpRollAccumulator = dice.rollD10();
 	create();
 
 	mapPtr = map;
@@ -95,14 +98,17 @@ void Character::postInitialize(Map* map) {
 //!Takes map pointer
 //! @param levelVal	Level of character
 Character::Character(int levelVal, Map* map, AbstractStrategy* as) {
+	dice = Dice();
+	hpRollAccumulator = dice.rollD10();
+	log = new Logger();
 	create();
 
 	this->as = as;
 
 	//Print statements used for testing
-	std::cout << "str: " << str << std::endl;
-	std::cout << "dex: " << dex << std::endl;
-	std::cout << "con: " << con << std::endl;
+	//std::cout << "str: " << str << std::endl;
+	//std::cout << "dex: " << dex << std::endl;
+	//std::cout << "con: " << con << std::endl;
 
 	for (int i = 1; i < levelVal; i++) {
 		levelUp();
@@ -220,11 +226,12 @@ void Character::generateRandomStats()
 }
 
 //! Calculates the hitpoints of the character.
-//! Hitpoints are calculated by adding the constitution modifier to the character level
+//! Hitpoints are calculated by adding the constitution modifier to the accumulator of hit points 
+//! from dice rolls. 
 void Character::calculateHp()
 {
-	hp = abs(con_mod) + level;
-	maxHp = abs(con_mod)  + level;
+	hp = abs(con_mod) + hpRollAccumulator;
+	maxHp = abs(con_mod)  + hpRollAccumulator;
 }
 
 //! Calculates the armor class of the character.
@@ -266,6 +273,7 @@ void Character::levelUp() {
 	dex++;
 	con++;
 
+	hpRollAccumulator += dice.rollD10();
 	//Call relevant methods to update based on new stat increase
 	str_mod = (getModifier(str));
 	dex_mod = (getModifier(dex));
