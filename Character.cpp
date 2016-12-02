@@ -36,7 +36,6 @@ Character::Character() {
 	level = 1;
 	create();
 	inventory = vector<Item*>();
-	log->LogCharacter("Character named: " + name + " created at level: " + std::to_string(level));
 }
 
 //! Constructor that takes a level to initialize the stats accordingly

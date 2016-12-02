@@ -44,7 +44,6 @@ void CharacterDriver::save(Character* c, std::string filename)
 	outfile << "cha: " << c->getCha() << endl;
 	outfile << "hp: " << c->getHp() << endl;
 	outfile << "max hp: " << c->getMaxHp() << endl;
-
 	// Save equipment
 	temp = c->getHelmet();
 	if (temp != NULL)
@@ -88,7 +87,7 @@ void CharacterDriver::save(Character* c, std::string filename)
 	outfile << "inventory: " << endl;
 	if (inv != NULL) {
 		{
-			for (int i = 0; inv->size(); i++)
+			for (int i = 0; inv->size()-1; i++)
 				outfile << "- " << inv->at(i)->getName() << ", " << inv->at(i)->getType() << endl;
 		}
 	}
@@ -129,7 +128,6 @@ Character* CharacterDriver::load(std::string filename) {
 	}
 
 	try {
-
 		std::getline(infile, line);
 		std::string type = line.substr(line.find(":") + 2, line.length());
 
@@ -196,7 +194,7 @@ Character* CharacterDriver::load(std::string filename) {
 			//ring
 			std::getline(infile, line);
 			temp = line.substr(line.find(":") + 2, line.length());
-			if (temp != "-") {
+			if (temp != "-") {	
 				Ring ring = static_cast<Ring&>(icd.loadItem(temp + ".txt"));
 				Ring* ringPtr = new Ring();
 				ringPtr->setName(ring.getName());
@@ -237,48 +235,62 @@ Character* CharacterDriver::load(std::string filename) {
 			}
 		}
 		//inventory
-	std:getline(infile, line);
+	    std:getline(infile, line);
 		std::string tempType;
 		while (!infile.eof()) {
-			std::getline(infile, line);
-			temp = line.substr(line.find("-") + 2, line.find(",") - 1);
-			tempType = line.substr(line.find(",") + 1, line.length());
+			std::getline(infile, line);			
+			temp = line.substr(line.find("-") + 2, line.find(",") -2);
+			tempType = line.substr(line.find(",") + 2, line.length() -1);
 			if (tempType == "helmet") {
 				Helmet helmet = static_cast<Helmet&>(icd.loadItem(temp + ".txt"));
-				Helmet* helPtr = &helmet;
+				Helmet* helPtr = new Helmet();
+				helPtr->setName(helmet.getName());
+				c->setHelmet(helPtr);
 				c->addToInventory(helPtr);
 			}
 			else if (tempType == "armor") {
 				Armor armor = static_cast<Armor&>(icd.loadItem(temp + ".txt"));
-				Armor* armPtr = &armor;
+				Armor* armPtr = new Armor();
+				armPtr->setName(armor.getName());
+				c->setArmor(armPtr);
 				c->addToInventory(armPtr);
 			}
 			else if (tempType == "belt") {
 				Belt belt = static_cast<Belt&>(icd.loadItem(temp + ".txt"));
-				Belt* beltPtr = &belt;
+				Belt* beltPtr = new Belt();
+				beltPtr->setName(belt.getName());
+				c->setBelt(beltPtr);				
 				c->addToInventory(beltPtr);
 			}
 			else if (tempType == "ring") {
 				Ring ring = static_cast<Ring&>(icd.loadItem(temp + ".txt"));
-				Ring* ringPtr = &ring;
+				Ring* ringPtr = new Ring();
+				ringPtr->setName(ring.getName());
+				c->setRing(ringPtr);
+				// delete ringPtr;
 				c->addToInventory(ringPtr);
 			}
 			else if (tempType == "boots") {
 				Boots boots = static_cast<Boots&>(icd.loadItem(temp + ".txt"));
-				Boots* bootsPtr = &boots;
+				Boots* bootsPtr = new Boots();
+				bootsPtr->setName(boots.getName());
+				c->setBoots(bootsPtr);
 				c->addToInventory(bootsPtr);
 			}
 			else if (tempType == "shield") {
 				Shield shield = static_cast<Shield&>(icd.loadItem(temp + ".txt"));
-				Shield* shieldPtr = &shield;
+				Shield* shieldPtr = new Shield();
+				shieldPtr->setName(shield.getName());
+				c->setShield(shieldPtr);
 				c->addToInventory(shieldPtr);
 			}
 			else {
 				Weapon weapon = static_cast<Weapon&>(icd.loadItem(temp + ".txt"));
-				Weapon* weapPtr = &weapon;
+				Weapon* weapPtr = new Weapon();
+				weapPtr->setName(weapon.getName());
+				c->setWeapon(weapPtr);
 				c->addToInventory(weapPtr);
 			}
-
 		}
 
 		infile.close();
@@ -298,6 +310,7 @@ Character* CharacterDriver::load(std::string filename) {
 		c->calculateDamageBonus();
 	}
 	catch (exception e) {
+		cout << "\nexception here";
 		c = new Character();
 	}
 	return c;
@@ -344,53 +357,6 @@ Character* CharacterDriver::createACharacter() {
 	// Print options
 	cout << "****** Create a Character Menu ******\n";
 
-
-	//cout << "Enter 0 to create a character at Level 1" << endl;
-	//cout << "Enter 1 to create a character at a specific Level" << endl;
-	//cout << "Enter 2 to go back to the main menu" << endl;
-	//std::getline(cin, input);
-	//stringstream myStream(input);
-	//if (myStream >> option) {
-	//	switch (option) {
-	//	case 0:
-	//		c = new Fighter();
-	//		name = inputName();
-	//		c->setName(name);
-	//		return c;
-	//		break;
-	//	case 1:
-	//		// Input for the level
-	//		do {
-	//			cout << "\n\n";
-	//			cout << "Please enter the desired Level of the character" << endl;
-	//			std::getline(cin, input);
-
-	//			stringstream myStream(input);
-	//			if (myStream >> level && level >= 1) {
-	//				isInputValid = true;
-	//			}
-	//			else {
-	//				cout << "\n\n";
-	//				cout << "Invalid level, please try again.\n" << endl;
-	//			}
-	//		} while (!isInputValid);
-	//		c = new Fighter(level);
-	//		name = inputName();
-	//		c->setName(name);
-	//		return c;
-	//		break;
-	//	case 2:
-	//		cout << "Go back to main menu" << endl;
-	//		cout << "\n\n";
-	//		return c;
-	//		break;
-	//	default:
-	//		return c;
-	//		break;
-	//	}
-	//}
-	//return c;
-
 	cout << "Enter 0 to select the level and class of the character" << endl;
 	cout << "Enter 1 to go back to the main menu" << endl;
 	std::getline(cin, input);
@@ -429,6 +395,7 @@ Character* CharacterDriver::createACharacter() {
 	// Once level and name have been set, the character's class must be selected
 	c = selectFighterClass(level);
 	c->setName(name);
+	log->LogCharacter("Character named: " + c->getName() + " created at level: " + std::to_string(c->getLevel()));
 	return c;
 }
 
@@ -483,7 +450,12 @@ Character* CharacterDriver::selectFighterClass(int level)
 			return fighter;
 			break;
 		default:
-			return c;
+			// Create a bully by default
+			characterBullyBuilder = new CharacterBullyBuilder();
+			characterDirector.setCharacterBuilder(characterBullyBuilder);
+			characterDirector.constructCharacter(level);
+			fighter = characterBullyBuilder->getCharacter();
+			return fighter;
 			break;
 		}
 	}

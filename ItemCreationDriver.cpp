@@ -526,7 +526,7 @@ void ItemCreationDriver::showSaveDialogue(Item item)
 }
 
 //! Prompts the user to edit an item
-void ItemCreationDriver::showEditDialogue(Item item)
+Item ItemCreationDriver::showEditDialogue(Item item)
 {
 	string input;
 	string name;
@@ -568,6 +568,7 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			else {
 				cout << "Armor invalid, please enter attribute values between 1 and 5" << "\n";
 			}
+			return armor;
 		}
 		else if (item.getType() == "helmet")
 		{
@@ -584,7 +585,7 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			else {
 				cout << "Helmet invalid, please enter attribute values between 1 and 5" << "\n";
 			}
-
+			return helmet;
 		}
 		else if (item.getType() == "belt")
 		{
@@ -600,6 +601,7 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			else {
 				cout << "Belt invalid, please enter attribute values between 1 and 5" << "\n";
 			}
+			return belt;
 		}
 		else if (item.getType() == "boots")
 		{
@@ -615,6 +617,7 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			else {
 				cout << "Boots invalid, please enter attribute values between 1 and 5" << "\n";
 			}
+			return boots;
 		}
 		else if (item.getType() == "ring")
 		{
@@ -633,6 +636,7 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			else {
 				cout << "Ring invalid, please enter attribute values between 1 and 5" << "\n";
 			}
+			return ring;
 		}
 		else if (item.getType() == "weapon")
 		{
@@ -648,6 +652,7 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			else {
 				cout << "Weapon invalid, please enter attribute values between 1 and 5" << "\n";
 			}
+			return weapon;
 		}
 		else if (item.getType() == "shield")
 		{
@@ -657,17 +662,19 @@ void ItemCreationDriver::showEditDialogue(Item item)
 			if (shield.validateEquipment() == true)
 			{
 				saveItem(shield, item.getName());
+				return shield;
 				cout << "\nEdit successful\n";
 			}
 			else {
 				cout << "Shield invalid, please enter attribute values between 1 and 5" << "\n";
 			}
+			return shield;
 		}
 	}
 }
 
 //! Prompts the user to load an item, after the item is loaded successfully the user is prompted to edit the item
-void ItemCreationDriver::showLoadMenu()
+Item ItemCreationDriver::showLoadMenu()
 {
 	string input;
 	cout << "\nEnter the filename of the item you would like to load (without file extension)\n";
@@ -680,50 +687,46 @@ void ItemCreationDriver::showLoadMenu()
 		{
 			Shield shield = static_cast<Shield&>(item);
 			cout << "Shield name: " << shield.getName() << "  level: " << shield.getLevel() << " Armor Class: " << shield.getArmorClass() << "\n";
-			showEditDialogue(shield);
 		}
 		else if (item.getType() == "helmet")
 		{
 			Helmet helmet = static_cast<Helmet&>(item);
 			cout << "Helmet name: " << helmet.getName() << " level: " << helmet.getLevel() << " armor class: " << helmet.getArmorClass()
 				<< " intelligence: " << helmet.getIntelligence() << " wisdom: " << helmet.getWisdom() << "\n";
-			showEditDialogue(helmet);
 		}
 		else if (item.getType() == "armor")
 		{
 			Armor armor = static_cast<Armor&>(item);
 			cout << "Armor name: " << armor.getName() << " level: " << armor.getLevel() << " armor class: " << armor.getArmorClass() << "\n";
-			showEditDialogue(armor);
 		}
 		else if (item.getType() == "boots")
 		{
 			Boots boots = static_cast<Boots&>(item);
 			cout << "Boots name: " << boots.getName() << " level: " << boots.getLevel() << " Dexterity: " << boots.getDexterity()
 				<< " Armor Class: " << boots.getArmorClass() << "\n";
-			showEditDialogue(boots);
 		}
 		else if (item.getType() == "ring")
 		{
 			Ring ring = static_cast<Ring&>(item);
 			cout << "Ring name: " << ring.getName() << " level: " << ring.getLevel() << " Armor Class: " << ring.getArmorClass()
 				<< " Wisdom: " << ring.getWisdom() << " Strength: " << ring.getStrength() << " Charisma: " << ring.getCharisma() << " Constitution: " << ring.getConstitution() << "\n";
-			showEditDialogue(ring);
 		}
 		else if (item.getType() == "weapon")
 		{
 			Weapon weapon = static_cast<Weapon&>(item);
 			cout << "Weapon name: " << weapon.getName() << " level: " << weapon.getLevel() << " Attack: " << weapon.getAttack() << " damage: " << weapon.getDamage() << "\n";
-			showEditDialogue(weapon);
 		}
 		else if (item.getType() == "belt")
 		{
 			Belt belt = static_cast<Belt&>(item);
 			cout << "Belt name: " << belt.getName() << " level: " << belt.getLevel() << " strength: " << belt.getStrength()
 				<< " constitution: " << belt.getConstitution() << "\n";
-			showEditDialogue(belt);
 		}
 	}
+	return item;
 }
+
+
 
 
 //! Helper menu for prompting entry of fields with names

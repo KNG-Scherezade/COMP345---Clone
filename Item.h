@@ -13,7 +13,7 @@ class Item
 public:
 	Item();
 	~Item();
-	string getName() { return name; };
+	virtual string getName() { return name; };
 	void setName(string i_name) { name = i_name; };
 	string getType() { return type; };
 	

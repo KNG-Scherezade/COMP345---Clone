@@ -21,12 +21,14 @@ public:
 	void saveItem(Item item, string fileName);
 
 	//! Prompts the user to load an item, after the item is loaded successfully the user is prompted to edit the item
-	void showLoadMenu();
+	Item showLoadMenu();
+
+	//! Prompts the user to edit an item
+	Item showEditDialogue(Item item);
 private:
 	//! Prompts the user to save an item
 	void showSaveDialogue(Item item);
-	//! Prompts the user to edit an item
-	void showEditDialogue(Item item);
+
 	//! Helper menu for prompting entry of fields with numerical values
 	int enterNumber(std::string attribute);
 	//! Helper menu for prompting entry of fields with names
