@@ -37,7 +37,7 @@
 
 #include "MonsterObserver.h"
 
-#include "MapListings.h"
+#include "CampaignListings.h"
 
 #include "CharacterListings.h"
 #include "MapObserver.h"
@@ -187,6 +187,8 @@ void showMainMenuForMapAndCampaign() {
 
 	//Item variables
 	Item item;
+	Ring ring;
+	Ring* r;
 
 	//Map & Campaign variables
 	vector<Map*>* maps = new vector<Map*>();
@@ -239,7 +241,6 @@ void showMainMenuForMapAndCampaign() {
 		cout << "Enter 16 to equip an item.\n";
 		cout << "Enter 17 to unequip an item.\n";
 		cout << "Enter 20 to play the game.\n";
-		cout << "Enter 21 to edit an item.\n";
 		getline(cin, input);
 		stringstream myStream(input);
 		if (myStream >> option) {
@@ -296,7 +297,7 @@ void showMainMenuForMapAndCampaign() {
 
 			case 9:
 				cout << "\n\n";
-				item = icd.showLoadMenu();
+				icd.showLoadMenu();
 				break;
 
 			case 10:
@@ -338,15 +339,13 @@ void showMainMenuForMapAndCampaign() {
 			case 15:
 				cout << "\n\n";
 				if (character != NULL) {
-					if (item.getName() != "unknown")
-					{
-						character->addToInventory(&item);
-					}
-					else 
-						cout << "No item is selected" << endl;
+					item = icd.loadItem("MagicRing.txt");
+					ring = static_cast<Ring&>(item);
+					r = &ring;
+					character->addToInventory(r);
 				}
 				else
-					cout << "No character selected" << endl;
+					cout << "No character is selected" << endl;
 				break;
 
 			case 16:
@@ -368,14 +367,6 @@ void showMainMenuForMapAndCampaign() {
 			case 20:
 				cout << "\n\n";
 				playDriver();
-
-			case 21:
-				cout << "\n\n";
-				if (item.getName() != "unknown")
-					icd.showEditDialogue(item);
-				else
-					cout << "There is no item selected." << endl;
-				break;
 
 			default:
 				cout << "\n\n";
@@ -1102,22 +1093,22 @@ string inputName()
 int playDriver() {
 	// *********************************************************INITIALIZATION AND SELECTION OF MAP AND CHARACTER *********************************************************
 
-	Map* map = nullptr;
+	Campaign* campaign = nullptr;
 	Character* chara = nullptr;
 
 	std::cout << "------------------------------\n";
 
-	MapListings* mapChoiceOptions = new MapListings();
+	CampaignListings* campaignChoiceOptions = new CampaignListings();
 	CharacterListings* characterChoiceOptions = new CharacterListings();
 
 	std::cout << "------------------------------\n";
 
-	if (mapChoiceOptions->getNumberOfOptions() == 0 && characterChoiceOptions->getNumberOfOptions() == 0) {
+	if (campaignChoiceOptions->getNumberOfOptions() == 0 && characterChoiceOptions->getNumberOfOptions() == 0) {
 		std::cout << "No maps or characters\nGo make some.\n";
 		getchar();
 		return -1;
 	}
-	else if (mapChoiceOptions->getNumberOfOptions() == 0 || characterChoiceOptions->getNumberOfOptions() == 0) {
+	else if (campaignChoiceOptions->getNumberOfOptions() == 0 || characterChoiceOptions->getNumberOfOptions() == 0) {
 		std::cout << "No maps xor characters\nGo make some.\n";
 		getchar();
 		return -2;
@@ -1126,9 +1117,9 @@ int playDriver() {
 	bool repeat = true;
 	while (repeat) {
 
-		mapChoiceOptions->displayMaps();
-		map = mapChoiceOptions->acceptInput4Map();
-		MapObserver* mo1 = new MapObserver(map);
+		campaignChoiceOptions->displayMaps();
+		campaign = campaignChoiceOptions->acceptInput4Map();
+		MapObserver* mo1 = new MapObserver(campaign->getMap(0));
 		std::cout << mo1->printMap() << "\n";
 
 		characterChoiceOptions->displayCharacters();
@@ -1142,18 +1133,22 @@ int playDriver() {
 
 		if (strcmp("0", confirmation) == 0) {
 			std::cout << "\nWe'll do it again then...\n";
+			campaign->getMap(0)->detatch();
 			delete mo1;
 		}
 		else if (strcmp("1", confirmation) == 0) {
 			std::cout << "\nLets move on...\n";
 			//Set the map pointer
-			chara->postInitialize(map);
+			//chara->postInitialize(campaign->getMap(0));
+			campaign->getMap(0)->detatch();
+			delete mo1;
 			repeat = false;
 		}
 		else
 			std::cout << "What is a " << confirmation << " ?\n";
 	}
-	delete mapChoiceOptions;
+
+	delete campaignChoiceOptions;
 	delete characterChoiceOptions;
 	// ******************************************************************************************************************
 
@@ -1166,7 +1161,7 @@ int playDriver() {
 
 	// ********************************************************* START OF GAME LOOP AND GAME PLAY *********************************************************
 
-	GameDriver gd(chara, map);
+	GameDriver gd(chara, campaign);
 
 
 	// ********************************************************* *********************************************************
