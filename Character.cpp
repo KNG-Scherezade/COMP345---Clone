@@ -20,8 +20,8 @@
 
 //#include "stdafx.h"
 #include "Character.h"
-#include "ItemGenerator.h"
 #include "AbstractStrategy.h"
+#include "ItemGenerator.h"
 
 #include <random>
 #include <iostream>
@@ -45,11 +45,16 @@ Character::Character(int levelVal) {
 	create();
 	inventory = vector<Item*>();
 
+	//Print statements used for testing
+	/*std::cout << "str: " << str << std::endl;
+	std::cout << "dex: " << dex << std::endl;
+	std::cout << "con: " << con << std::endl;*/
+
 	for (int i = 1; i < levelVal; i++) {
 		levelUp();
 	}
-
 	log->LogCharacter("Character named: " + name + " created at level: " + std::to_string(level));
+
 }
 
 Character::Character(Map* map) {
@@ -60,6 +65,7 @@ Character::Character(Map* map) {
 	mapPtr = map;
 	moveable = (true);
 	mapPtr->setCharacter(this);
+	log->LogCharacter("Character named: " + name + " created at level: " + std::to_string(level));
 
 }
 //! To be used if constructor does not set the map pointer
@@ -67,6 +73,7 @@ void Character::postInitialize(Map* map) {
 	mapPtr = map;
 	moveable = (true);
 	mapPtr->setCharacter(this);
+
 	mapPtr->characterInitialized = true;
 
 	for each(ItemContainer* ic in mapPtr->getChests()) {
@@ -76,16 +83,21 @@ void Character::postInitialize(Map* map) {
 	for each(Monster* mons in mapPtr->getMonsters()) {
 		mons->levelUpStats(level);
 	}
+	log->LogCharacter("Character named: " + name + " created at level: " + std::to_string(level));
 }
 
 //! Constructor that takes a level to initialize the stats accordingly
 //!Takes map pointer
 //! @param levelVal	Level of character
 Character::Character(int levelVal, Map* map, AbstractStrategy* as) {
-	level = 1;
 	create();
 
 	this->as = as;
+
+	//Print statements used for testing
+	std::cout << "str: " << str << std::endl;
+	std::cout << "dex: " << dex << std::endl;
+	std::cout << "con: " << con << std::endl;
 
 	for (int i = 1; i < levelVal; i++) {
 		levelUp();
@@ -196,17 +208,6 @@ void Character::calculateHp()
 void Character::calculateAc()
 {
 	ac = 10 + dex_mod;
-
-	if (helmet != NULL)
-		ac += helmet->getArmorClass();
-	if (armor != NULL)
-		ac += armor->getArmorClass();
-	if (belt != NULL)
-		ac += 0;
-	if (boots != NULL)
-		ac += boots->getArmorClass();
-	if (shield != NULL)
-		ac += shield->getArmorClass();
 }
 
 //! Calculates the base attack bonus of the character.
@@ -277,7 +278,6 @@ int Character::getModifier(int stat)
 //! @param damage	Damage to be taken away from hitpoints
 void Character::hit(int damage) {
 	hp -= damage;
-	log->LogCharacter("Hit for " + std::to_string(damage));
 }
 
 
@@ -333,7 +333,6 @@ void Character::printEquipped()
 	cout << "\n";
 }
 
-//! Prints the stats of the character
 void Character::printStats() {
 	std::cout << "LVL " << getLevel() <<
 		"\nHealth " << getHp() << "/" << getMaxHp() <<
@@ -345,32 +344,19 @@ void Character::printStats() {
 		"\nWis " << getWis() << "\n";
 }
 
-//! Equip an item from the inventory. Item position in inventory is used to determine item that is intended to be equip
-//! @param pos	Position of item in inventory
 void Character::equip(int pos)
 {
 	Item* item = inventory[pos];
 	std::string type = item->getType();
 
-	// In cases where nothing is equip it will simply equip the new item
-	// Otherwise it will replace the old equipment in that slot and place it in the inventory
-	// Modifying stats dynamically
 	if (type == "helmet") {
-		if (helmet == NULL) {
+		if (helmet == NULL)
 			helmet = static_cast<Helmet*>(item);
-		}
 		else {
 			inventory.push_back(helmet);
-			wis -= helmet->getWisdom();
-			intel -= helmet->getWisdom();
 			helmet = static_cast<Helmet*>(item);
 		}
-		wis += helmet->getWisdom();
-		intel += helmet->getWisdom();
-		wis_mod = getModifier(wis);
-		intel_mod = getModifier(intel);
 		inventory.erase(inventory.begin() + pos);
-		
 	}
 	if (type == "armor") {
 		if (armor == NULL)
@@ -382,59 +368,21 @@ void Character::equip(int pos)
 		inventory.erase(inventory.begin() + pos);
 	}
 	if (type == "ring") {
-		int tempHp = 0;
 		if (ring == NULL)
 			ring = static_cast<Ring*>(item);
 		else {
 			inventory.push_back(ring);
-			cha -= ring->getCharisma();
-			con -= ring->getConstitution();
-			str -= ring->getStrength();
-			wis -= ring->getWisdom();
-			if (hp != maxHp) {
-				tempHp = hp;
-			}
 			ring = static_cast<Ring*>(item);
 		}
-		cha += ring->getCharisma();
-		con += ring->getConstitution();
-		str += ring->getStrength();
-		wis += ring->getWisdom();
-		cha_mod = getModifier(cha);
-		con_mod = getModifier(con);
-		str_mod = getModifier(str);
-		wis_mod = getModifier(wis);
-		calculateHp();
-		if (tempHp != 0)
-			if(tempHp < maxHp)
-				hp = tempHp;
-		calculateDamageBonus();
-		calculateBaseAttackBonus();
 		inventory.erase(inventory.begin() + pos);
 	}
 	if (type == "belt") {
-		int tempHp = 0;
 		if (belt == NULL)
 			belt = static_cast<Belt*>(item);
 		else {
 			inventory.push_back(belt);
-			con -= belt->getConstitution();
-			str -= belt->getStrength();
-			if (hp != maxHp) {
-				tempHp = hp;
-			}
 			belt = static_cast<Belt*>(item);
 		}
-		con += belt->getConstitution();
-		str += belt->getStrength();
-		con_mod = getModifier(con);
-		str_mod = getModifier(str);
-		calculateHp();
-		if (tempHp != 0)
-			if (tempHp < maxHp)
-				hp = tempHp;
-		calculateDamageBonus();
-		calculateBaseAttackBonus();
 		inventory.erase(inventory.begin() + pos);
 	}
 	if (type == "boots") {
@@ -442,11 +390,8 @@ void Character::equip(int pos)
 			boots = static_cast<Boots*>(item);
 		else {
 			inventory.push_back(boots);
-			dex -= boots->getDexterity();
 			boots = static_cast<Boots*>(item);
 		}
-		dex += boots->getDexterity();
-		dex_mod = getModifier(dex);
 		inventory.erase(inventory.begin() + pos);
 	}
 	if (type == "shield") {
@@ -468,13 +413,8 @@ void Character::equip(int pos)
 		inventory.erase(inventory.begin() + pos);
 	}
 
-	calculateAc();
-	log->LogCharacter(item->getName() + " equipped");
-
 }
 
-//! Unequip an item from the character. Slot represents which equipment slot is targeted for unequip
-//! @param slot	Equipment slot to unequip
 void Character::unequip(int slot)
 {
 	std::string type;
@@ -507,13 +447,8 @@ void Character::unequip(int slot)
 
 	if (type == "helmet") {
 		if (helmet != NULL) {
-			intel -= helmet->getIntelligence();
-			wis -= helmet->getWisdom();
-			intel_mod = getModifier(intel);
-			wis_mod = getModifier(wis);
 			inventory.push_back(helmet);
 			helmet = NULL;
-			log->LogCharacter("Helmet unequipped");
 		}
 		else
 			cout << "There is nothing in that slot." << endl;
@@ -522,68 +457,30 @@ void Character::unequip(int slot)
 		if (armor != NULL) {
 			inventory.push_back(armor);
 			armor = NULL;
-			log->LogCharacter("Armor unequipped");
 		}
 		else
 			cout << "There is nothing in that slot." << endl;
 	}
 	if (type == "ring") {
-		int tempHp = 0;
 		if (ring != NULL) {
-			cha -= ring->getCharisma();
-			con -= ring->getConstitution();
-			str -= ring->getStrength();
-			wis -= ring->getWisdom();
-			cha_mod = getModifier(cha);
-			con_mod = getModifier(con);
-			str_mod = getModifier(str);
-			wis_mod = getModifier(wis);
-			if (hp != maxHp) {
-				tempHp = hp;
-			}
-			calculateHp();
-			if (tempHp != 0)
-				if (tempHp < maxHp)
-					hp = tempHp;
-			calculateDamageBonus();
-			calculateBaseAttackBonus();
 			inventory.push_back(ring);
 			ring = NULL;
-			log->LogCharacter("Ring unequipped");
 		}
 		else
 			cout << "There is nothing in that slot." << endl;
 	}
 	if (type == "belt") {
-		int tempHp = 0;
 		if (belt != NULL) {
-			con -= belt->getConstitution();
-			str -= belt->getStrength();
-			con_mod = getModifier(con);
-			str_mod = getModifier(str);
-			if (hp != maxHp) {
-				tempHp = hp;
-			}
-			calculateHp();
-			if (tempHp != 0)
-				if (tempHp < maxHp)
-					hp = tempHp;
-			calculateDamageBonus();
-			calculateBaseAttackBonus();
 			inventory.push_back(belt);
 			belt = NULL;
-			log->LogCharacter("Belt unequipped");
 		}
 		else
 			cout << "There is nothing in that slot." << endl;
 	}
 	if (type == "boots") {
 		if (boots != NULL) {
-			dex -= boots->getDexterity();
-			dex_mod = getModifier(dex);
 			inventory.push_back(boots);
 			boots = NULL;
-			log->LogCharacter("Boots unequipped");
 		}
 		else
 			cout << "There is nothing in that slot." << endl;
@@ -592,7 +489,6 @@ void Character::unequip(int slot)
 		if (shield != NULL) {
 			inventory.push_back(shield);
 			shield = NULL;
-			log->LogCharacter("Shield unequipped");
 		}
 		else
 			cout << "There is nothing in that slot." << endl;
@@ -601,16 +497,12 @@ void Character::unequip(int slot)
 		if (weapon != NULL) {
 			inventory.push_back(weapon);
 			weapon = NULL;
-			log->LogCharacter("Weapon unequipped");
 		}
 		else
 			cout << "There is nothing in that slot." << endl;
 	}
-	calculateAc();
 }
 
-//! Adds an item to the player's inventory
-//! @param item	Item being added
 void Character::addToInventory(Item* item) {
 	inventory.push_back(item);
 	log->LogCharacter(item->getName() + " added to inventory");
@@ -620,6 +512,7 @@ void Character::addToInventory(Item* item) {
 
 
 //////////////////////MOVEMENT
+
 
 bool Character::checkMonsters(std::string moveDir) {
 	for each(Monster* mon in mapPtr->getMonsters()) {
@@ -764,18 +657,9 @@ int Character::checkAttack(std::string lookDir) {
 			spaceID = '?';
 		}
 	}
-
-	if (finalLookDir == "l")	checkInteraction(CHARA_POSITION_Y, CHARA_POSITION_X - 1, spaceID);
-	else if (finalLookDir == "r")checkInteraction(CHARA_POSITION_Y, CHARA_POSITION_X + 1, spaceID);
-	else if (finalLookDir == "u")checkInteraction(CHARA_POSITION_Y - 1, CHARA_POSITION_X, spaceID);
-	else if (finalLookDir == "ul")checkInteraction(CHARA_POSITION_Y - 1, CHARA_POSITION_X - 1, spaceID);
-	else if (finalLookDir == "ur")checkInteraction(CHARA_POSITION_Y - 1, CHARA_POSITION_X + 1, spaceID);
-	else if (finalLookDir == "d")checkInteraction(CHARA_POSITION_Y + 1, CHARA_POSITION_X, spaceID);
-	else if (finalLookDir == "dr")checkInteraction(CHARA_POSITION_Y + 1, CHARA_POSITION_X + 1, spaceID);
-	else if (finalLookDir == "dl")checkInteraction(CHARA_POSITION_Y + 1, CHARA_POSITION_X - 1, spaceID);
-
 	return spaceID;
 }
+
 
 //!Checks what the character is looking at and returns an ID from map function checkStandingSpace(col, row)
 int Character::checkLook(std::string lookDir) {
@@ -822,10 +706,24 @@ int Character::checkLook(std::string lookDir) {
 			finalLookDir = "d";
 			spaceID = CHECK_SPACE_D;
 		}
+		else {
+			spaceID = '?';
+		}
 	}
+
+	if (finalLookDir == "l")	checkInteraction(CHARA_POSITION_Y, CHARA_POSITION_X - 1, spaceID);
+	else if (finalLookDir == "r")checkInteraction(CHARA_POSITION_Y, CHARA_POSITION_X + 1, spaceID);
+	else if (finalLookDir == "u")checkInteraction(CHARA_POSITION_Y - 1, CHARA_POSITION_X, spaceID);
+	else if (finalLookDir == "ul")checkInteraction(CHARA_POSITION_Y - 1, CHARA_POSITION_X - 1, spaceID);
+	else if (finalLookDir == "ur")checkInteraction(CHARA_POSITION_Y - 1, CHARA_POSITION_X + 1, spaceID);
+	else if (finalLookDir == "d")checkInteraction(CHARA_POSITION_Y + 1, CHARA_POSITION_X, spaceID);
+	else if (finalLookDir == "dr")checkInteraction(CHARA_POSITION_Y + 1, CHARA_POSITION_X + 1, spaceID);
+	else if (finalLookDir == "dl")checkInteraction(CHARA_POSITION_Y + 1, CHARA_POSITION_X - 1, spaceID);
+
 	return spaceID;
 }
-	
+
+
 //!Based off of what happens in checklook, this function alters the state of the map, displays a message or does other actions.
 //!Eg. the character makes acts on a chest so it should get the map to make a change.(Only map related features)
 //! ex. the character interacts with a chest so the chest flag should be set.
@@ -858,6 +756,7 @@ void Character::checkInteraction(int row, int col, int type) {
 	}
 }
 
+
 std::string Character::toString() {
 	return ("Name: " + name + "\nLevel: " + std::to_string(level) + "\nstr:" + std::to_string(str) + "\ndex:" + std::to_string(dex) + "\ncon" + std::to_string(con)
 		+ "\nInt" + std::to_string(intel) + "\nwis" + std::to_string(wis) + "\ncha:" + std::to_string(cha) + "\nHP: " + std::to_string(hp) + "\nmax HP: " + std::to_string(maxHp) + "\n");
@@ -866,7 +765,6 @@ std::string Character::toString() {
 
 //! A character specific usage of map's checkStandingSpace(int col,int row) function
 int Character::StandingOn(int col, int row) {
-	log->LogMap("Current position: col: " + std::to_string(col) + " row: " + std::to_string(row));
 	return mapPtr->checkStandingSpace(col, row);
 }
 

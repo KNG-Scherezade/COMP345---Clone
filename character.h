@@ -230,7 +230,7 @@ public:
 	//! @param inv	Vector of items in inventory
 	void setInventory(vector<Item*> inv) { inventory = inv; }
 
-	//! Get the inventory of the character
+	//! Get the inventory of tha character
 	//! @return Vector of inventory items
 	vector<Item*>* getInventory() { return &inventory; }
 
