@@ -1,0 +1,8 @@
+type: ring
+name: MagicRing2
+level: 1
+armor class: 1
+wisdom: 1
+strength: 1
+charisma: 1
+constitution: 1

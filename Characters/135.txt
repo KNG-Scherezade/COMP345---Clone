@@ -1,0 +1,19 @@
+type: Fighter
+name: 135
+level: 16
+str: 144
+dex: 20
+con: 21
+int: 13
+wis: 8
+cha: 11
+hp: 6
+max hp: 6
+helmet: -
+armor: -
+ring: MagicRing
+belt: -
+boots: -
+shield: -
+weapon: -
+inventory: 

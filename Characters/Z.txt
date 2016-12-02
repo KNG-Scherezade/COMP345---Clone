@@ -1,0 +1,19 @@
+type: Fighter
+name: Z
+level: 100
+str: 17
+dex: 13
+con: 13
+int: 11
+wis: 8
+cha: 11
+hp: 640
+max hp: 640
+helmet: -
+armor: -
+ring: -
+belt: -
+boots: -
+shield: -
+weapon: -
+inventory: 
